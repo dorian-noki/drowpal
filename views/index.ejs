@@ -265,16 +265,16 @@
               <fieldset class="pal-images-fieldset"><legend>パル画像</legend><p class="small">通常画像は必須です。表情差分は名前を変更でき、不要なものを個別に削除できます。</p><div class="pal-image-grid" id="pal-image-grid"><% characterImages.forEach((image) => { %><label class="pal-image-option" data-expression-key="<%= image.key %>"><span><%= image.label %></span><img src="<%= image.src %>" alt="<%= image.label %>のプレビュー" /><input type="file" name="palImage_<%= image.key %>" accept="image/png,image/jpeg,image/webp" /></label><% }); %></div><button type="button" class="secondary pal-expression-add" id="pal-expression-add">＋ 表情を追加</button><p class="small" id="pal-expression-status" role="status" aria-live="polite"></p></fieldset>
                             <fieldset class="pal-motion-fieldset" id="pal-motion-settings">
                               <legend>呼吸モーション</legend>
-                              <p class="small">通常画像から頭・肩・胸の位置を自動で見つけて、呼吸しているように動かします。変更はすぐ保存されます。</p>
+                              <p class="small">通常画像から頭・肩・胸の位置を自動で見つけて、呼吸しているように動かします。動きの設定は自動生成され、オン・オフはすぐ保存されます。</p>
                               <p class="motion-performance-note">呼吸モーションは画像を動かし続けるため、端末の性能や使用状況によってはメモリや電池を多めに使います。動作が重い、発熱する、操作がカクつく場合は「呼吸モーションを使う」をオフにしてください。画像や設定、振り返りはそのまま利用できます。</p>
                               <label class="pal-motion-toggle"><input type="checkbox" id="pal-motion-enabled" checked /> 呼吸モーションを使う</label>
-                              <div class="pal-motion-quick">
+                              <div class="pal-motion-quick" hidden>
                                 <label>呼吸の速さ<span><input type="range" id="pal-motion-speed" min="8" max="30" step="1" value="16" /><output for="pal-motion-speed" id="pal-motion-speed-value">16回/分</output></span></label>
                                 <label>呼吸の強さ<span><input type="range" id="pal-motion-strength" min="0" max="200" step="5" value="100" /><output for="pal-motion-strength" id="pal-motion-strength-value">100%</output></span></label>
                               </div>
                               <div class="pal-motion-actions">
-                                <button type="button" id="pal-motion-open">範囲を見ながら細かく調整</button>
-                                <button type="button" class="secondary" id="pal-motion-auto">自動で作り直す</button>
+                                <button type="button" id="pal-motion-open" hidden>範囲を見ながら細かく調整</button>
+                                <button type="button" class="secondary" id="pal-motion-auto">呼吸モーションを自動生成</button>
                               </div>
                               <p class="small" id="pal-motion-status" role="status" aria-live="polite"></p>
                             </fieldset>

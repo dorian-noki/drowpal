@@ -6087,6 +6087,11 @@ body.has-custom-background {
   gap: 0.6rem 1rem;
 }
 
+.pal-motion-quick[hidden],
+#pal-motion-open[hidden] {
+  display: none;
+}
+
 .pal-motion-quick label {
   display: grid;
   gap: 0.25rem;

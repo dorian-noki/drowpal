@@ -1106,9 +1106,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!current || current.imageKey !== palMotionKey()) {
       state.palMotion = Motion.createAutoConfig(palImage, {
         enabled: current?.enabled ?? true,
-        bpm: current?.bpm,
-        strength: current?.strength,
-        smoothness: current?.smoothness,
         imageKey: palMotionKey()
       });
       saveState();
@@ -1139,9 +1136,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   motionSpeedInput.addEventListener('input', () => updatePalMotion({ bpm: Number(motionSpeedInput.value) }));
   motionStrengthInput.addEventListener('input', () => updatePalMotion({ strength: Number(motionStrengthInput.value) / 100 }));
   motionAutoButton.addEventListener('click', () => {
-    if (!confirm('通常画像から範囲と呼吸の動きを自動で作り直します。細かく調整した内容は置き換わります。よろしいですか？')) return;
-    updatePalMotion({ imageKey: '' });
-    ensurePalMotion();
+    if (!confirm('通常画像から、速度・強さを含む呼吸モーションを自動生成し直します。現在の動きは置き換わります。よろしいですか？')) return;
+    const enabled = Motion.normalizeConfig(state.palMotion || {}).enabled;
+    state.palMotion = Motion.createAutoConfig(palImage, {
+      enabled,
+      imageKey: palMotionKey()
+    });
+    saveState();
+    palMotion?.setConfig(state.palMotion);
+    renderMotionSettings();
   });
   motionOpenButton.addEventListener('click', async () => {
     try {
