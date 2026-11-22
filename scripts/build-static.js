@@ -40,6 +40,8 @@ const locals = {
     count: 0,
     goal: 3,
     percent: 0,
+    period: 'week',
+    type: 'all',
     start: today,
     end: today
   },
@@ -55,7 +57,12 @@ const locals = {
   characterStatusMessage: '一緒に続けよう',
   characterImages,
   palImagesJson: JSON.stringify(Object.fromEntries(characterImages.map((image) => [image.key, image.src]))),
-  promptContextJson: JSON.stringify({ character, weeklyGoal: { count: 0, goal: 3 }, todos: [], reflections: [] }),
+  promptContextJson: JSON.stringify({
+    character,
+    weeklyGoal: { count: 0, goal: 3, period: 'week', type: 'all' },
+    todos: [],
+    reflections: []
+  }),
   year: now.getFullYear(),
   month: now.getMonth(),
   monthData: { firstDay: new Date(now.getFullYear(), now.getMonth(), 1), days: [] },

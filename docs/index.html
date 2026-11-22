@@ -31,6 +31,7 @@
               <button type="button" class="menu-button" data-view-target="illustrations" aria-label="イラスト">イラスト</button>
               <button type="button" class="menu-button" data-view-target="growth" aria-label="集計">集計</button>
               <button type="button" class="menu-button" data-view-target="settings" aria-label="設定">設定</button>
+              <button type="button" class="menu-button" data-view-target="help" aria-label="使い方">使い方</button>
             </nav>
           </div>
           <div class="home-header-image" id="home-header-image" hidden>
@@ -45,6 +46,7 @@
                 <span class="welcome-label">はじめての方へ</span>
                 <h1 id="welcome-heading">今日は、どこから始めますか？</h1>
                 <p>描いた絵を残して、小さく振り返る。続け方が分からないときは、ソラに相談できます。</p>
+                <button type="button" class="welcome-help-link" data-view-target="help">はじめての方は「使い方ガイド」へ →</button>
               </div>
               <div class="quick-start" aria-label="使い方の3ステップ">
                 <button type="button" class="quick-step" data-view-target="illustrations">
@@ -72,16 +74,18 @@
             <div class="home-grid">
               <section class="panel-block goal-card" aria-labelledby="weekly-goal-heading">
                 <div class="block-header">
-                  <div><span class="card-kicker">今週の進捗</span><h3 id="weekly-goal-heading">週間目標</h3></div>
-                  <button type="button" class="secondary consult-button" data-ai-consult="週間目標について相談したいです。今週の進み具合を踏まえて、目標枚数の決め方や今週の練習計画を一緒に考えてください。">AIに相談</button>
+                  <div><span class="card-kicker" id="goal-period-label">今週の進捗</span><h3 id="weekly-goal-heading">絵の目標</h3></div>
+                  <button type="button" class="secondary consult-button" data-ai-consult="絵の目標について相談したいです。期間、種類、目標枚数を踏まえて、練習計画を一緒に考えてください。">AIに相談</button>
                 </div>
                 <p class="goal-date">2026-11-22 〜 2026-11-22</p>
                 <div class="goal-progress-row">
                   <p class="goal-count"><strong id="weekly-goal-count">0</strong> / 3 枚</p>
                   <span class="goal-percent">0%</span>
                 </div>
-                <div class="progress" role="progressbar" aria-label="週間目標の達成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span style="width: 0%"></span></div>
+                <div class="progress" role="progressbar" aria-label="絵の目標の達成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span style="width: 0%"></span></div>
                 <form method="post" action="#" class="inline-form goal-form">
+                  <label>期間<select name="goalPeriod"><option value="week">週</option><option value="month">月</option></select></label>
+                  <label>種類<select name="goalType"><option value="all">すべて</option><option value="練習">練習</option><option value="らくがき">らくがき</option><option value="本気">本気</option></select></label>
                   <label>目標枚数<input type="number" name="weeklyGoal" min="1" max="50" step="1" value="3" required /></label>
                   <button type="submit">変更</button>
                 </form>
@@ -173,7 +177,7 @@
               </label>
               <label>タイトル<input type="text" name="title" placeholder="今日の一枚" /></label>
               <label>日付<input type="date" name="illustrationDate" value="2026-11-22" required /></label>
-              <label>種類<select name="illustrationType"><option value="練習">練習</option><option value="落書き">落書き</option><option value="本気">本気</option></select></label>
+              <label>種類<select name="illustrationType"><option value="練習">練習</option><option value="らくがき">らくがき</option><option value="本気">本気</option></select></label>
               <label>制作時間（h）<input type="number" name="illustrationHours" step="0.25" min="0" placeholder="例: 1.5（任意）" /></label>
               <div class="form-submit-row"><p>あとで振り返り画面から評価できます。</p><button type="submit">イラストを保存</button></div>
             </form>
@@ -478,6 +482,169 @@
             </section>
             <button type="button" class="welcome-restore settings-welcome-restore" id="welcome-restore" hidden>使い方を表示</button>
           </div>
+
+          <div class="feature-view" data-view="help">
+            <header class="page-header"><span class="page-icon" aria-hidden="true">?</span><div><h2>使い方ガイド</h2><p>はじめて使う方は、上から順に読んでください。5分ほどで読めます。</p></div></header>
+
+            <nav class="help-toc form-card" aria-label="ガイドの目次">
+              <strong>目次</strong>
+              <ol>
+                <li><a href="#help-about">Drowpalとは</a></li>
+                <li><a href="#help-data">データの保存について（必ずお読みください）</a></li>
+                <li><a href="#help-flow">基本の流れ：絵を登録 → 振り返る</a></li>
+                <li><a href="#help-home">ホーム（目標・やること）</a></li>
+                <li><a href="#help-ai">AIに相談</a></li>
+                <li><a href="#help-other">カレンダー・集計・設定</a></li>
+                <li><a href="#help-backup">バックアップと別の端末への引っ越し</a></li>
+                <li><a href="#help-faq">よくある質問</a></li>
+              </ol>
+            </nav>
+
+            <section class="help-section form-card" id="help-about" aria-labelledby="help-about-heading">
+              <h3 id="help-about-heading">1. Drowpalとは</h3>
+              <p>Drowpal（ドロパル）は、イラストの練習を続けるためのアプリです。描いた絵を記録し、短く振り返ることで、自分の成長や次に試したいことが見えるようになります。画面の横にいるキャラクター（初期設定では「ソラ」）が、操作に合わせて声をかけてくれます。</p>
+              <p>インストールや会員登録は不要です。このページをブラウザーで開くだけで使えます。スマートフォンでもパソコンでも使えます。</p>
+            </section>
+
+            <section class="help-section form-card help-important" id="help-data" aria-labelledby="help-data-heading">
+              <h3 id="help-data-heading">2. データの保存について（必ずお読みください）</h3>
+              <div class="help-callout">
+                <strong>🔒 データはインターネットにアップロードされません</strong>
+                <p>登録した絵・振り返り・設定などは、すべて<b>いま使っているブラウザーの中だけ</b>に保存されます。サーバーには送られないため、開発者を含め他の人に見られる心配はありません。</p>
+              </div>
+              <div class="help-callout help-callout-warning">
+                <strong>⚠ そのかわり、次のような場合はデータが見られなくなります</strong>
+                <ul>
+                  <li>ブラウザーの「閲覧履歴データの削除」で<b>キャッシュ・Cookie・サイトデータ</b>を消したとき</li>
+                  <li><b>別の端末</b>（例：スマホで登録した絵をパソコンで見る）や、<b>別のブラウザー</b>（例：Chrome と Safari）で開いたとき</li>
+                  <li>シークレットモード・プライベートブラウズで使ったとき（閉じると消えます）</li>
+                  <li>端末の容量不足などで、ブラウザーが自動的にデータを整理したとき</li>
+                </ul>
+              </div>
+              <div class="help-callout help-callout-action">
+                <strong>💾 対策：ときどき「バックアップ（JSONファイル）」を保存してください</strong>
+                <p>「設定」ページのいちばん下にある「端末内データ」から、全データを1つのファイルに書き出せます。このファイルがあれば、データが消えても、別の端末でも元どおりに戻せます。週に1回程度の保存がおすすめです。</p>
+                <button type="button" data-view-target="settings" data-help-jump="data-transfer-panel">バックアップ画面を開く</button>
+                <p class="small"><a href="#help-backup">詳しい手順は「7. バックアップと別の端末への引っ越し」へ</a></p>
+              </div>
+              <p class="small">例外として、「AIに相談」でコピーした文章を自分で外部AI（ChatGPTなど）に貼り付けたときと、Discord通知を設定したときだけ、その内容が送信先のサービスに届きます。どちらも自分で操作しない限り送信されません。</p>
+            </section>
+
+            <section class="help-section form-card" id="help-flow" aria-labelledby="help-flow-heading">
+              <h3 id="help-flow-heading">3. 基本の流れ：絵を登録 → 振り返る</h3>
+              <p>毎回の使い方は、この2ステップだけです。どちらも1〜3分で終わります。</p>
+              <div class="help-steps">
+                <article class="help-step">
+                  <span class="help-step-number">1</span>
+                  <div>
+                    <h4>絵を登録する</h4>
+                    <p>メニューの「イラスト」（スマホは画面下の「＋ 絵を登録」）を開きます。</p>
+                    <ol>
+                      <li>「描いた絵をここに追加」をタップして、画像（PNG・JPEG・WebP）を選びます。写真で撮った絵でも大丈夫です。</li>
+                      <li>タイトル・描いた日付を入力します（タイトルは空でもOK）。</li>
+                      <li>種類を「練習」「らくがき」「本気」から選びます。</li>
+                      <li>制作時間がわかれば入力します（任意）。</li>
+                      <li>「イラストを保存」を押せば完了です。</li>
+                    </ol>
+                    <p class="small">完成していない絵や短いらくがきも、描いたこと自体が記録になります。気軽に登録しましょう。</p>
+                    <button type="button" class="secondary" data-view-target="illustrations">絵を登録するページへ</button>
+                  </div>
+                </article>
+                <article class="help-step">
+                  <span class="help-step-number">2</span>
+                  <div>
+                    <h4>振り返る</h4>
+                    <p>メニューの「振り返り」（スマホは画面下の「◎ 振り返る」）を開きます。</p>
+                    <ol>
+                      <li><b>見返す絵</b>：登録した絵を選びます。選んだ絵が表示されるので、見ながら入力できます。</li>
+                      <li><b>まずは全体</b>：星（1〜5）をタップして、全体の手ごたえを評価します。</li>
+                      <li><b>詳しく見る</b>（任意）：「人物」「風景」にチェックすると、それぞれに合った評価項目が出ます。「＋ 評価項目を追加」で自分だけの項目も作れます。</li>
+                      <li><b>ひと言残す</b>：かかった時間と、うまくいったこと・次に試したいことをメモします。</li>
+                      <li>「振り返りを保存」を押せば完了です。</li>
+                    </ol>
+                    <p class="small">ページの下の「過去の記録」から、これまでの振り返りを開いて読み返せます。</p>
+                    <button type="button" class="secondary" data-view-target="reflection">振り返りページへ</button>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            <section class="help-section form-card" id="help-home" aria-labelledby="help-home-heading">
+              <h3 id="help-home-heading">4. ホーム（目標・やること）</h3>
+              <dl class="help-list">
+                <dt>絵の目標</dt>
+                <dd>「期間（週／月）」「種類（すべて・練習・らくがき・本気）」「目標枚数」を選んで「変更」を押すと、その期間に登録した絵の枚数から達成度が表示されます。例：「月・らくがき・10枚」</dd>
+                <dt>やること</dt>
+                <dd>次に練習したいことをメモできるリストです。追加したら、終わったものに ✓ を付けます。</dd>
+                <dt>最近の振り返り</dt>
+                <dd>最近の振り返りが新しい順に表示されます。</dd>
+                <dt>キャラクター</dt>
+                <dd>タップすると反応します。「表示を調整」から大きさや位置を変えられます。</dd>
+              </dl>
+            </section>
+
+            <section class="help-section form-card" id="help-ai" aria-labelledby="help-ai-heading">
+              <h3 id="help-ai-heading">5. AIに相談</h3>
+              <p>練習の悩みや次の目標を、キャラクターになりきった外部AI（ChatGPT・Gemini・Claude）に相談できます。Drowpal自体はAIと通信せず、相談用の文章（プロンプト）を作るだけです。</p>
+              <ol>
+                <li>「AIに相談」欄に相談したいことを入力し、「プロンプト作成」を押します。キャラクター設定・目標・やること・最近の振り返りが自動で文章に入ります。</li>
+                <li>はじめての相談は「新しい会話（全文）」、同じ会話の続きなら「会話の続き（前回からの差分だけ）」を選びます。</li>
+                <li>「プロンプトをコピー」を押し、ChatGPT・Gemini・Claudeのどれかを開いて貼り付けて送信します（ChatGPTはボタンから入力済みの状態で開けます）。</li>
+              </ol>
+              <p class="small">外部AIに送る前に、メモに個人情報や人に見せたくない内容が入っていないか確認してください。ホームの「目標」「やること」にある「AIに相談」ボタンを押すと、相談文のひな形が入ります。</p>
+            </section>
+
+            <section class="help-section form-card" id="help-other" aria-labelledby="help-other-heading">
+              <h3 id="help-other-heading">6. カレンダー・集計・設定</h3>
+              <dl class="help-list">
+                <dt>カレンダー</dt>
+                <dd>今月、どの日に絵を描いたかが一目でわかります。</dd>
+                <dt>集計</dt>
+                <dd>描いた日数・枚数・制作時間などを自動で集計します。「利用前」の欄に、Drowpalを使う前の記録を入れると比較できます。週ごとの継続状況や評価の推移も見られます。研究・検証に参加している方は、ここの「集計表をCSVで保存」「詳細をJSONで保存」で提出用データを書き出せます（画像・タイトル・メモ・相談内容は含まれません）。</dd>
+                <dt>設定</dt>
+                <dd>
+                  <ul>
+                    <li><b>キャラクター</b>：名前・性格・口調・呼び方などを自由に変えられます。AIに相談するときもこの設定が使われます。</li>
+                    <li><b>キャラクター画像</b>：好きな画像に差し替えたり、表情を追加したりできます。「呼吸モーション」で画像がゆっくり呼吸するように動きます。</li>
+                    <li><b>画面の見た目</b>：背景・ヘッダー・ステッカー画像、テーマカラー、フォントを変えられます。</li>
+                    <li><b>AI生成データ</b>：外部AIにキャラクターのセリフを作ってもらい、取り込めます。</li>
+                    <li><b>Discord通知</b>：指定した曜日・時刻に、Discordへ声かけメッセージを送れます（Drowpalを開いている間のみ）。</li>
+                    <li><b>端末内データ</b>：バックアップの保存と復元を行います。</li>
+                    <li><b>全てリセット</b>：この端末のDrowpalデータをすべて削除します。元に戻せないので注意してください。</li>
+                  </ul>
+                  変更したら、ページ下部の「設定を保存」を押してください。
+                </dd>
+              </dl>
+            </section>
+
+            <section class="help-section form-card" id="help-backup" aria-labelledby="help-backup-heading">
+              <h3 id="help-backup-heading">7. バックアップと別の端末への引っ越し</h3>
+              <h4>バックアップを保存する</h4>
+              <ol>
+                <li>「設定」を開き、いちばん下の「端末内データ」まで進みます。</li>
+                <li>「バックアップを保存」を押すと、<code>drowpal-backup-日付.json</code> というファイルがダウンロードされます。</li>
+                <li>ファイルは、クラウド（Googleドライブ・iCloudなど）や、自分宛てのメールなど、ブラウザー以外の場所に保管してください。</li>
+              </ol>
+              <h4>バックアップから戻す・別の端末で使う</h4>
+              <ol>
+                <li>新しい端末（またはデータが消えた端末）でDrowpalを開きます。</li>
+                <li>「設定」→「端末内データ」の「バックアップから復元」で、保存したJSONファイルを選びます。</li>
+                <li>「取り込む」を押して確認画面で「OK」を選ぶと、自動で再読み込みされ、元のデータが表示されます。</li>
+              </ol>
+              <p class="small">取り込むと、その端末にあったデータはバックアップの内容に<b>置き換わります</b>（合体はされません）。2台を同時に使う場合は、最後に使った端末のバックアップを、もう一方へ取り込むようにしてください。Discord通知のWebhook URLは安全のためバックアップに含まれないので、取り込み後に入力し直してください。</p>
+              <button type="button" data-view-target="settings" data-help-jump="data-transfer-panel">バックアップ画面を開く</button>
+            </section>
+
+            <section class="help-section form-card" id="help-faq" aria-labelledby="help-faq-heading">
+              <h3 id="help-faq-heading">8. よくある質問</h3>
+              <details><summary>登録した絵や振り返りが消えてしまいました</summary><p>ブラウザーのデータ削除や、別のブラウザー・端末で開いている可能性があります。いつもと同じ端末・ブラウザーで開いているか確認してください。バックアップがあれば「設定」→「端末内データ」から戻せます。</p></details>
+              <details><summary>スマホとパソコンで同じデータを使いたい</summary><p>自動では同期されません。片方で「バックアップを保存」し、そのファイルをもう片方で「取り込む」ことで移せます。</p></details>
+              <details><summary>描いた絵を他の人に見られることはありますか？</summary><p>ありません。データは自分のブラウザーの中だけにあり、どこにもアップロードされません。ただし、同じ端末・同じブラウザーを他の人が開くと見えるので、共用の端末では注意してください。</p></details>
+              <details><summary>「保存容量が不足しています」と表示されました</summary><p>画像が多すぎる・大きすぎる可能性があります。まずバックアップを保存してから、不要な背景画像などを外してください。キャラクター画像は「画像を圧縮して使う」で軽くできます。</p></details>
+              <details><summary>動作が重い・端末が熱くなる</summary><p>「設定」→「キャラクター画像」→「呼吸モーションを使う」をオフにしてください。他の機能はそのまま使えます。</p></details>
+              <details><summary>ホームの案内カードを消してしまった</summary><p>「設定」ページ下部の「使い方を表示」で戻せます。このガイドは、メニューの「使い方」からいつでも開けます。</p></details>
+            </section>
+          </div>
         </section>
 
         <section class="sidebar-character panel">
@@ -649,7 +816,7 @@
 
     <script>window.palImages = {"normal":"./assets/default.png"};</script>
     <script>window.reflectionDraft = null;</script>
-    <script>window.drowpalPromptContext = {"character":{"id":1,"name":"ソラ","personality":"優しく励ましてくれる","style":"やさしく短く、前向き","greeting":"こんにちは。今日の気持ちを一緒に整理しよう。","user_name":"あなた","interaction_style":"寄り添いながら次の一歩を提案する","profile":"","examples":"[]","examplesList":[]},"weeklyGoal":{"count":0,"goal":3},"todos":[],"reflections":[]};</script>
+    <script>window.drowpalPromptContext = {"character":{"id":1,"name":"ソラ","personality":"優しく励ましてくれる","style":"やさしく短く、前向き","greeting":"こんにちは。今日の気持ちを一緒に整理しよう。","user_name":"あなた","interaction_style":"寄り添いながら次の一歩を提案する","profile":"","examples":"[]","examplesList":[]},"weeklyGoal":{"count":0,"goal":3,"period":"week","type":"all"},"todos":[],"reflections":[]};</script>
     <script src="./theme.js"></script>
     <script src="./ai-import.js"></script>
     <script src="./discord-notifications.js"></script>

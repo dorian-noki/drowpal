@@ -2223,6 +2223,153 @@ main.app-shell {
   line-height: 1.65;
 }
 
+.welcome-help-link {
+  margin-top: 0.55rem;
+  padding: 0.35rem 0.7rem;
+  color: var(--accent-text);
+  background: var(--panel);
+  border: 1px solid var(--border-accent);
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.help-toc,
+.help-section {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.help-toc ol,
+.help-section ol,
+.help-section ul {
+  margin: 0;
+  padding-left: 1.4rem;
+}
+
+.help-toc a,
+.help-section a {
+  color: var(--accent-text);
+}
+
+.help-section {
+  scroll-margin-top: 1rem;
+}
+
+.help-section h3,
+.help-section h4,
+.help-section p {
+  margin: 0;
+}
+
+.help-section h4 {
+  color: var(--accent-text);
+}
+
+.help-section > button,
+.help-callout button,
+.help-step button {
+  justify-self: start;
+}
+
+.help-section code {
+  padding: 0.05rem 0.3rem;
+  background: var(--surface-accent);
+  border-radius: 6px;
+}
+
+.help-callout {
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.8rem 0.9rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--success);
+  border-radius: 12px;
+}
+
+.help-callout-warning {
+  border-left-color: var(--danger);
+}
+
+.help-callout-action {
+  background: var(--surface-accent);
+  border-left-color: var(--accent);
+}
+
+.help-callout p,
+.help-callout ul {
+  font-size: 0.88rem;
+}
+
+.help-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.75rem;
+}
+
+.help-step {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 0.6rem;
+  padding: 0.8rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.help-step > div {
+  display: grid;
+  gap: 0.45rem;
+  align-content: start;
+}
+
+.help-step-number {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: var(--on-accent);
+  background: var(--accent);
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.help-list {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.help-list dt {
+  margin-top: 0.4rem;
+  color: var(--accent-text);
+  font-weight: 800;
+}
+
+.help-list dd {
+  margin: 0;
+}
+
+.help-section details {
+  padding: 0.6rem 0.8rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.help-section summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.help-section details p {
+  margin-top: 0.4rem;
+  color: var(--muted);
+}
+
 .quick-start {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2470,12 +2617,28 @@ main.app-shell {
   font-weight: 700;
 }
 
-.goal-form label {
-  width: 7.5rem;
+.goal-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.goal-form input {
+.goal-form label {
+  width: auto;
+  min-width: 0;
+}
+
+.goal-form input,
+.goal-form select {
   width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 0.5rem 0.6rem;
+  background: var(--panel);
+  color: var(--text-strong);
+}
+
+.goal-form button {
+  align-self: end;
 }
 
 .todo-empty {

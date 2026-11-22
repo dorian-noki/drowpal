@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       examplesList: []
     },
     statusMessage: '一緒に続けよう',
-    weeklyGoal: 3,
+    weeklyGoal: { goal: 3, period: 'week', type: 'all' },
     todos: [],
     illustrations: [],
     reflections: [],
@@ -131,6 +131,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     baseline: { ...defaultState.study.baseline, ...(study?.baseline || {}) },
     period: { ...defaultState.study.period, ...(study?.period || {}) }
   });
+  const normalizeIllustrationType = (type) => type === '落書き' ? 'らくがき' : (
+    ['練習', 'らくがき', '本気'].includes(type) ? type : '練習'
+  );
+  const normalizeGoal = (goal) => {
+    const source = typeof goal === 'number' || typeof goal === 'string' ? { goal } : (goal || {});
+    return {
+      goal: Math.min(50, Math.max(1, Number(source.goal) || 3)),
+      period: source.period === 'month' ? 'month' : 'week',
+      type: source.type === 'all' || ['練習', 'らくがき', '本気'].includes(source.type)
+        ? source.type
+        : 'all'
+    };
+  };
 
   let state = { ...defaultState };
   try {
@@ -147,6 +160,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         appearance: { ...defaultState.appearance, ...(saved.appearance || {}) },
         generatedContent: { ...defaultState.generatedContent, ...(saved.generatedContent || {}) },
         promptLog: Array.isArray(saved.promptLog) ? saved.promptLog : [],
+        illustrations: Array.isArray(saved.illustrations)
+          ? saved.illustrations.map((item) => ({ ...item, type: normalizeIllustrationType(item.type) }))
+          : [],
+        weeklyGoal: normalizeGoal(saved.weeklyGoal),
         study: normalizeStudy(saved.study),
         discordNotifications: window.DrowpalDiscordNotifications.normalizeConfig({
           ...defaultState.discordNotifications,
@@ -459,6 +476,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   setChatCollapsed(panelStates.chat);
   menuButtons.forEach((button) => button.addEventListener('click', () => showView(button.dataset.viewTarget)));
+  document.querySelectorAll('[data-help-jump]').forEach((button) => button.addEventListener('click', () => {
+    requestAnimationFrame(() => document.getElementById(button.dataset.helpJump)?.scrollIntoView({ block: 'start' }));
+  }));
   menuToggle?.addEventListener('click', () => {
     const open = menuList.hidden;
     menuList.hidden = !open;
@@ -495,14 +515,33 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const weeklySummary = () => {
     const now = new Date();
-    const monday = new Date(now);
-    monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
-    const start = localDate(monday);
-    const end = localDate(sunday);
-    const count = state.illustrations.filter((item) => item.date >= start && item.date <= end).length;
-    return { start, end, count, goal: state.weeklyGoal, percent: Math.min(100, Math.round(count / state.weeklyGoal * 100)) };
+    const goal = normalizeGoal(state.weeklyGoal);
+    let startDate;
+    let endDate;
+    if (goal.period === 'month') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    } else {
+      startDate = new Date(now);
+      startDate.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+      endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 6);
+    }
+    const start = localDate(startDate);
+    const end = localDate(endDate);
+    const count = state.illustrations.filter((item) =>
+      item.date >= start && item.date <= end &&
+      (goal.type === 'all' || normalizeIllustrationType(item.type) === goal.type)
+    ).length;
+    return {
+      start,
+      end,
+      count,
+      goal: goal.goal,
+      period: goal.period,
+      type: goal.type,
+      percent: Math.min(100, Math.round(count / goal.goal * 100))
+    };
   };
 
   const renderTodos = () => {
@@ -534,8 +573,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const renderWeeklyGoal = () => {
     const summary = weeklySummary();
+    const periodLabel = summary.period === 'month' ? '今月' : '今週';
+    const typeLabel = summary.type === 'all' ? 'すべての種類' : summary.type;
     document.getElementById('weekly-goal-count').textContent = String(summary.count);
     document.querySelector('.goal-count').lastChild.textContent = ` / ${summary.goal} 枚`;
+    document.getElementById('goal-period-label').textContent = `${periodLabel}の進捗・${typeLabel}`;
     document.querySelector('.goal-percent').textContent = `${summary.percent}%`;
     document.querySelector('.goal-date').textContent = `${summary.start} 〜 ${summary.end}`;
     const progress = document.querySelector('.progress');
@@ -543,6 +585,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     progress.querySelector('span').style.width = `${summary.percent}%`;
     const input = document.querySelector('[name="weeklyGoal"]');
     input.value = String(summary.goal);
+    document.querySelector('[name="goalPeriod"]').value = summary.period;
+    document.querySelector('[name="goalType"]').value = summary.type;
     return summary;
   };
 
@@ -590,7 +634,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       card.className = 'card small-card';
       card.innerHTML = `<strong></strong><div class="small"></div><img class="uploaded" />`;
       card.querySelector('strong').textContent = illustration.title;
-      card.querySelector('.small').textContent = `${illustration.date || '日付未設定'}・${illustration.type || '練習'}${illustration.hours > 0 ? `・${illustration.hours}h` : ''}`;
+      card.querySelector('.small').textContent = `${illustration.date || '日付未設定'}・${normalizeIllustrationType(illustration.type)}${illustration.hours > 0 ? `・${illustration.hours}h` : ''}`;
       card.querySelector('img').src = await getImageUrl(illustration.imageKey);
       card.querySelector('img').alt = illustration.title;
       grid.append(card);
@@ -1719,7 +1763,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.querySelector('.goal-form').addEventListener('submit', (event) => {
     event.preventDefault();
-    state.weeklyGoal = Math.max(1, Number(new FormData(event.currentTarget).get('weeklyGoal')) || 3);
+    const formData = new FormData(event.currentTarget);
+    state.weeklyGoal = normalizeGoal({
+      goal: formData.get('weeklyGoal'),
+      period: formData.get('goalPeriod'),
+      type: formData.get('goalType')
+    });
     saveState();
     renderWeeklyGoal();
     showGeneratedMessage('notification_lines', (item) => item.condition === 'goal_changed');
@@ -2202,6 +2251,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         illustrations.push({
           ...item,
           id: Number(item.id) || nextId(illustrations),
+          type: normalizeIllustrationType(item.type),
           imageKey: await dataUrlToKey(item.imageData, 'import-illustration')
         });
       }
@@ -2235,7 +2285,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         illustrations,
         reflections: backup.reflections,
         todos: backup.todos,
-        weeklyGoal: Number(backup.weeklyGoal) || 3,
+        weeklyGoal: normalizeGoal(backup.weeklyGoal),
         promptHistory: Array.isArray(backup.promptHistory) ? backup.promptHistory : [],
         promptLog: Array.isArray(backup.promptLog) ? backup.promptLog : [],
         study: normalizeStudy(backup.study)

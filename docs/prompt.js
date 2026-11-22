@@ -46,7 +46,11 @@
     return `- ${reflection.date || '日付未設定'}: 総合${reflection.score || 0}/5、${reflection.hours || 0}時間${details ? `、${details}` : ''}${reflection.note ? `。メモ: ${reflection.note}` : ''}`;
   };
 
-  const formatWeeklyGoal = (weeklyGoal) => `${weeklyGoal.count || 0}/${weeklyGoal.goal || 0}枚（${weeklyGoal.start || ''}〜${weeklyGoal.end || ''}）`;
+  const formatWeeklyGoal = (weeklyGoal) => {
+    const period = weeklyGoal.period === 'month' ? '月' : '週';
+    const type = weeklyGoal.type && weeklyGoal.type !== 'all' ? weeklyGoal.type : 'すべての種類';
+    return `${period}・${type}: ${weeklyGoal.count || 0}/${weeklyGoal.goal || 0}枚（${weeklyGoal.start || ''}〜${weeklyGoal.end || ''}）`;
+  };
 
   const todoKey = (todo) => (todo.id !== undefined && todo.id !== null ? `id:${todo.id}` : `title:${todo.title}`);
   const reflectionKey = (reflection) => (reflection.id !== undefined && reflection.id !== null
@@ -93,7 +97,7 @@
       '- 以降「【Drowpal 追加情報】」で始まるメッセージが届いたら、前回からの変更点として制作状況を更新して会話を続ける。',
       '',
       '【現在の制作状況】',
-      weeklyGoal ? `週間目標: ${formatWeeklyGoal(weeklyGoal)}` : null,
+      weeklyGoal ? `制作目標: ${formatWeeklyGoal(weeklyGoal)}` : null,
       'Todo:',
       todoLines,
       '最近の振り返り:',
@@ -114,7 +118,14 @@
       character: normalizeCharacter(context?.character),
       expressions: normalizeExpressions(context?.expressions),
       weeklyGoal: weeklyGoal
-        ? { count: weeklyGoal.count || 0, goal: weeklyGoal.goal || 0, start: weeklyGoal.start || '', end: weeklyGoal.end || '' }
+        ? {
+          count: weeklyGoal.count || 0,
+          goal: weeklyGoal.goal || 0,
+          period: weeklyGoal.period === 'month' ? 'month' : 'week',
+          type: weeklyGoal.type || 'all',
+          start: weeklyGoal.start || '',
+          end: weeklyGoal.end || ''
+        }
         : null,
       todos: (Array.isArray(context?.todos) ? context.todos : [])
         .map((todo) => ({ key: todoKey(todo), title: todo.title, done: Boolean(todo.done) })),
@@ -143,10 +154,10 @@
 
     const before = snapshot.weeklyGoal;
     const after = current.weeklyGoal;
-    if (after && (!before || before.start !== after.start)) {
-      changes.push(`新しい週の週間目標: ${formatWeeklyGoal(after)}`);
+    if (after && (!before || before.start !== after.start || before.period !== after.period || before.type !== after.type)) {
+      changes.push(`制作目標を更新しました: ${formatWeeklyGoal(after)}`);
     } else if (after && (before.count !== after.count || before.goal !== after.goal)) {
-      changes.push(`週間目標: ${before.count}/${before.goal}枚 → ${after.count}/${after.goal}枚`);
+      changes.push(`制作目標: ${before.count}/${before.goal}枚 → ${after.count}/${after.goal}枚`);
     }
 
     const previousTodos = new Map((snapshot.todos || []).map((todo) => [todo.key, todo]));
