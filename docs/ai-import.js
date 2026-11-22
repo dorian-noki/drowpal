@@ -127,7 +127,10 @@
   }
 
   function stripCodeFence(raw) {
-    const trimmed = String(raw || '').trim();
+    const trimmed = String(raw || '')
+      .replace(/\\[ \t]*\r?\n/g, '\n')
+      .replace(/(?:&#x0*20;|&#0*32;)/gi, ' ')
+      .trim();
     const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
     return fenced ? fenced[1].trim() : trimmed;
   }
@@ -219,9 +222,9 @@
     }
   }
 
-  function buildFixPrompt(type, raw, errors) {
+  function buildFixPrompt(type, raw, errors, character) {
     return [
-      buildGenerationPrompt(type, 1, {}),
+      buildGenerationPrompt(type, 1, character),
       '',
       '以下は不適切だった回答です。',
       stripCodeFence(raw),
@@ -325,9 +328,9 @@
     return { data: errors.length === 0 ? normalized : null, errors };
   }
 
-  function buildBatchFixPrompt(raw, errors, count) {
+  function buildBatchFixPrompt(raw, errors, count, character) {
     return [
-      buildBatchGenerationPrompt(count, {}),
+      buildBatchGenerationPrompt(count, character),
       '',
       '以下は不適切だった回答です。',
       stripCodeFence(raw),

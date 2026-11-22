@@ -1540,8 +1540,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       fixButton.hidden = false;
       fixButton.onclick = async () => {
         const prompt = aiImportMode === 'batch'
-          ? aiImport.buildBatchFixPrompt(raw, validation.errors, aiImportBatchCount)
-          : aiImport.buildFixPrompt(aiType.value, raw, validation.errors);
+          ? aiImport.buildBatchFixPrompt(raw, validation.errors, aiImportBatchCount, state.character)
+          : aiImport.buildFixPrompt(aiType.value, raw, validation.errors, state.character);
         await window.DrowpalPrompt.copyText(prompt);
         message.textContent = '修正依頼プロンプトをコピーしました。外部AIへ貼り付けてください。';
       };
