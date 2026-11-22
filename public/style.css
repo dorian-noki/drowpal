@@ -3633,11 +3633,11 @@ button:hover:not(:disabled) {
   --pal-scale: 1.28;
   --pal-x: 0%;
   --pal-y: 0%;
-  --pal-reaction-duration: 320ms;
-  --pal-press-x: 1.04;
-  --pal-press-y: 0.93;
-  --pal-settle-x: 1.006;
-  --pal-settle-y: 0.992;
+  --pal-reaction-duration: 280ms;
+  --pal-press-x: 1.01;
+  --pal-press-y: 0.99;
+  --pal-settle-x: 1.001;
+  --pal-settle-y: 0.999;
   position: absolute;
   inset: 0;
   width: 100%;
@@ -3658,7 +3658,7 @@ button:hover:not(:disabled) {
 
 .character-image.is-pressed {
   scale: var(--pal-press-x) var(--pal-press-y);
-  translate: 0 5px;
+  translate: 0 1px;
   transition:
     scale 75ms cubic-bezier(0.2, 0.75, 0.25, 1),
     translate 75ms cubic-bezier(0.2, 0.75, 0.25, 1);
@@ -3673,12 +3673,12 @@ button:hover:not(:disabled) {
 @keyframes pal-tap-reaction {
   0% {
     scale: var(--pal-press-x) var(--pal-press-y);
-    translate: 0 5px;
+    translate: 0 1px;
     animation-timing-function: cubic-bezier(0.2, 0.75, 0.25, 1);
   }
   34% {
     scale: var(--pal-settle-x) var(--pal-settle-y);
-    translate: 0 1px;
+    translate: 0 0.25px;
     animation-timing-function: cubic-bezier(0.22, 0.75, 0.3, 1);
   }
   100% {
