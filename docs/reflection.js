@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const dateInput = form.elements.reflectionDate;
   const illustrationSelect = form.elements.illustrationId;
   const overallScore = form.elements.score;
+  const hoursInput = form.elements.hours;
+  let hoursEdited = Number(window.reflectionDraft?.hours) > 0;
+  let overallComparison = null;
   const evaluationDataInput = form.querySelector('input[name="evaluationData"]') || document.getElementById('evaluation-data');
   const reflectionView = form.closest('[data-view="reflection"]');
   const mobilePreview = document.getElementById('reflection-image-mobile');
@@ -64,6 +67,81 @@ document.addEventListener('DOMContentLoaded', () => {
     desktopPreviewClosed = false;
     syncImagePreviews();
     if (selected?.dataset.date && dateInput) dateInput.value = selected.dataset.date;
+    if (hoursInput && !hoursEdited && selected?.dataset.hours) hoursInput.value = selected.dataset.hours;
+    updateComparisons();
+  }
+
+  const stars = (score) => `${'★'.repeat(score)}${'☆'.repeat(5 - score)}`;
+  const formatDiff = (diff) => (diff > 0 ? `+${diff}` : diff < 0 ? String(diff) : '±0');
+
+  // Past reflections on or before the selected date, newest first (excluding the one being edited).
+  function pastReflections() {
+    const history = typeof window.DrowpalReflectionHistory === 'function' ? window.DrowpalReflectionHistory() : [];
+    if (!Array.isArray(history)) return [];
+    const currentDate = dateInput?.value || '';
+    const editingId = window.reflectionDraft?.id;
+    return history
+      .filter((reflection) => reflection && String(reflection.id) !== String(editingId ?? '')
+        && (!currentDate || String(reflection.date || '') <= currentDate))
+      .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || (Number(b.id) || 0) - (Number(a.id) || 0));
+  }
+
+  function renderComparison(element, previous, currentScore) {
+    if (!element) return;
+    element.replaceChildren();
+    if (!previous) {
+      element.hidden = true;
+      return;
+    }
+    const diff = currentScore - previous.score;
+    const label = document.createElement('span');
+    label.textContent = `前回（${previous.date}）${stars(previous.score)}`;
+    const change = document.createElement('strong');
+    change.className = diff > 0 ? 'is-up' : diff < 0 ? 'is-down' : '';
+    change.textContent = formatDiff(diff);
+    element.append(label, change);
+    if (previous.reason) {
+      const reason = document.createElement('small');
+      reason.textContent = `前回の理由: ${previous.reason}`;
+      element.append(reason);
+    }
+    element.hidden = false;
+  }
+
+  function updateComparisons() {
+    if (!items) return;
+    const past = pastReflections();
+    if (!overallComparison) {
+      overallComparison = document.createElement('p');
+      overallComparison.className = 'score-previous';
+      form.querySelector('[data-score-picker]')?.closest('fieldset')?.append(overallComparison);
+    }
+    const lastOverall = past[0];
+    renderComparison(
+      overallComparison,
+      lastOverall ? { date: lastOverall.date, score: Number(lastOverall.score) || 3 } : null,
+      Number(overallScore?.value) || 3
+    );
+    items.querySelectorAll('.evaluation-item').forEach((item) => {
+      const name = (item.querySelector('.evaluation-name')?.value || '').trim();
+      let previous = null;
+      if (name) {
+        for (const reflection of past) {
+          const evaluation = reflection.evaluations?.find((entry) => entry?.name === name);
+          if (evaluation) {
+            previous = { date: reflection.date, score: Number(evaluation.score) || 3, reason: evaluation.reason || '' };
+            break;
+          }
+        }
+      }
+      let element = item.querySelector('.score-previous');
+      if (!element) {
+        element = document.createElement('p');
+        element.className = 'score-previous';
+        item.querySelector('.item-score')?.after(element);
+      }
+      renderComparison(element, previous, Number(item.querySelector('.item-score')?.dataset.score || 3));
+    });
   }
 
   function updateImageTransform() {
@@ -107,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
       presets: [...item.querySelectorAll('.reason-presets input:checked')].map((input) => input.value)
     })).filter((item) => item.name);
     evaluationDataInput.value = JSON.stringify(evaluations);
+    updateComparisons();
   }
 
   function scoreButtons(container, score) {
@@ -197,7 +276,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const score = Number(button.dataset.score);
     if (overallScore) overallScore.value = score;
     event.currentTarget.innerHTML = scoreButtons(null, score);
+    updateComparisons();
   });
+
+  hoursInput?.addEventListener('input', () => {
+    hoursEdited = true;
+  });
+  document.addEventListener('reflections:updated', updateComparisons);
 
   illustrationSelect?.addEventListener('change', selectIllustration);
   document.addEventListener('illustrations:updated', selectIllustration);

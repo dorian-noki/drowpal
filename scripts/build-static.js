@@ -79,6 +79,7 @@ ejs.renderFile(path.join(root, 'views', 'index.ejs'), locals)
       .replaceAll('src="/discord-notifications.js"', 'src="./discord-notifications.js"')
       .replaceAll('src="/theme.js"', 'src="./theme.js"')
       .replaceAll('src="/reflection.js"', 'src="./reflection.js"')
+      .replaceAll('src="/study.js"', 'src="./study.js"')
       .replaceAll('src="/pal-motion.js"', 'src="./pal-motion.js"')
       .replaceAll('src="/pal-motion-editor.js"', 'src="./pal-motion-editor.js"')
       .replaceAll('src="/app.js"', 'src="./static-app.js"')
@@ -106,6 +107,7 @@ ejs.renderFile(path.join(root, 'views', 'index.ejs'), locals)
     fs.copyFileSync(path.join(root, 'public', 'discord-notifications.js'), path.join(output, 'discord-notifications.js'));
     fs.copyFileSync(path.join(root, 'public', 'theme.js'), path.join(output, 'theme.js'));
     fs.copyFileSync(path.join(root, 'public', 'reflection.js'), path.join(output, 'reflection.js'));
+    fs.copyFileSync(path.join(root, 'public', 'study.js'), path.join(output, 'study.js'));
     fs.copyFileSync(path.join(root, 'public', 'pal-motion.js'), path.join(output, 'pal-motion.js'));
     fs.copyFileSync(path.join(root, 'public', 'pal-motion-editor.js'), path.join(output, 'pal-motion-editor.js'));
     fs.copyFileSync(path.join(root, 'public', 'favicon.ico'), path.join(output, 'favicon.ico'));

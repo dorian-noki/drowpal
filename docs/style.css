@@ -3138,6 +3138,29 @@ button:hover:not(:disabled) {
   font-size: 0.72rem;
 }
 
+.score-previous {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.5rem;
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.score-previous strong {
+  color: var(--muted);
+}
+
+.score-previous strong.is-up {
+  color: var(--accent);
+}
+
+.score-previous small {
+  flex-basis: 100%;
+  overflow-wrap: anywhere;
+}
+
 .evaluation-body label,
 .compact-form label {
   font-size: 0.86rem;
@@ -4899,6 +4922,181 @@ body.has-custom-background {
 
 .data-transfer-actions input[type='file'] {
   max-width: 240px;
+}
+
+.study-section {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.study-section h3 {
+  margin: 0;
+}
+
+.study-period-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.study-period {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0.75rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.study-period legend {
+  padding: 0 0.3rem;
+  color: var(--accent-text);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.study-period p {
+  margin: 0;
+}
+
+.study-date-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.study-section label {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  font-size: 0.84rem;
+}
+
+.study-warning {
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  color: var(--text-strong);
+  background: var(--surface-accent);
+  border: 1px solid var(--border-accent);
+  border-radius: 12px;
+  font-size: 0.82rem;
+}
+
+.study-table-wrap {
+  overflow-x: auto;
+}
+
+.study-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.study-table th,
+.study-table td {
+  padding: 0.45rem 0.6rem;
+  text-align: right;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.study-table thead th {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.study-table th:first-child {
+  text-align: left;
+}
+
+.study-table tbody th {
+  color: var(--text-strong);
+  font-weight: 700;
+}
+
+.study-table .is-up {
+  color: var(--accent-text);
+  font-weight: 800;
+}
+
+.study-table .is-down {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.study-table tr.is-empty td,
+.study-table tr.is-empty th {
+  color: var(--muted);
+  background: var(--surface);
+}
+
+.study-trend-select {
+  max-width: 260px;
+}
+
+.study-trend-summary {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.study-trend-chart {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  margin: 0.5rem 0;
+}
+
+.study-trend-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.study-trend-label {
+  fill: var(--muted);
+  font-size: 10px;
+}
+
+.study-trend-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.study-trend-dot {
+  fill: var(--panel);
+  stroke: var(--accent-strong);
+  stroke-width: 2;
+}
+
+.study-trend-list {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.82rem;
+}
+
+.study-trend-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.study-trend-stars {
+  color: var(--accent-strong);
+  letter-spacing: 0.05em;
 }
 
 .ai-import-panel {

@@ -89,6 +89,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     illustrations: [],
     reflections: [],
     promptHistory: [],
+    promptLog: [],
+    study: {
+      participantId: '',
+      baseline: { start: '', end: '', days: '', count: '', hours: '' },
+      period: { start: '', end: '' }
+    },
     generatedContent: {
       startup_lines: [],
       menu_lines: [],
@@ -120,6 +126,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   };
 
+  const normalizeStudy = (study) => ({
+    participantId: String(study?.participantId || '').slice(0, 20),
+    baseline: { ...defaultState.study.baseline, ...(study?.baseline || {}) },
+    period: { ...defaultState.study.period, ...(study?.period || {}) }
+  });
+
   let state = { ...defaultState };
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -134,6 +146,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         character: { ...defaultState.character, ...(saved.character || {}) },
         appearance: { ...defaultState.appearance, ...(saved.appearance || {}) },
         generatedContent: { ...defaultState.generatedContent, ...(saved.generatedContent || {}) },
+        promptLog: Array.isArray(saved.promptLog) ? saved.promptLog : [],
+        study: normalizeStudy(saved.study),
         discordNotifications: window.DrowpalDiscordNotifications.normalizeConfig({
           ...defaultState.discordNotifications,
           ...(saved.discordNotifications || {})
@@ -152,6 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       throw error;
     }
   };
+  window.DrowpalReflectionHistory = () => state.reflections;
   const nextId = (items) => Math.max(0, ...items.map((item) => Number(item.id) || 0)) + 1;
   const localDate = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   const escapeText = (value) => String(value ?? '');
@@ -399,6 +414,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (menuList) menuList.hidden = true;
     menuToggle?.setAttribute('aria-expanded', 'false');
     document.querySelectorAll('.feature-view').forEach((view) => { view.scrollTop = 0; });
+    document.dispatchEvent(new CustomEvent('view:shown', { detail: { name } }));
     const menuItem = getGeneratedItem('menu_lines', (item) => item.menu === name);
     if (menuItem) {
       const speech = document.getElementById('character-speech-bubble');
@@ -567,13 +583,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     for (const illustration of sorted) {
       const option = new Option(`${illustration.date || '日付未設定'}・${illustration.title}`, illustration.id);
       option.dataset.date = illustration.date;
+      if (illustration.hours > 0) option.dataset.hours = String(illustration.hours);
       option.dataset.imageSrc = await getImageUrl(illustration.imageKey);
       select.append(option);
       const card = document.createElement('div');
       card.className = 'card small-card';
       card.innerHTML = `<strong></strong><div class="small"></div><img class="uploaded" />`;
       card.querySelector('strong').textContent = illustration.title;
-      card.querySelector('.small').textContent = `${illustration.date || '日付未設定'}・${illustration.type || '練習'}`;
+      card.querySelector('.small').textContent = `${illustration.date || '日付未設定'}・${illustration.type || '練習'}${illustration.hours > 0 ? `・${illustration.hours}h` : ''}`;
       card.querySelector('img').src = await getImageUrl(illustration.imageKey);
       card.querySelector('img').alt = illustration.title;
       grid.append(card);
@@ -1748,6 +1765,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         title: String(formData.get('title') || '今日の一枚').trim(),
         date: String(formData.get('illustrationDate') || localDate()),
         type: String(formData.get('illustrationType') || '練習'),
+        hours: Math.max(0, Number(formData.get('illustrationHours')) || 0),
         imageKey
       });
       saveState();
@@ -1792,6 +1810,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderRecent();
     await renderReflectionHistory();
     renderCounts();
+    document.dispatchEvent(new CustomEvent('reflections:updated'));
     showGeneratedMessage('notification_lines', (item) => item.condition === 'reflection_saved');
     alert('振り返りをこの端末に保存しました。');
   });
@@ -1899,6 +1918,222 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  const study = window.DrowpalStudy;
+  const studyView = document.querySelector('[data-view="growth"]');
+  const studyFields = [...studyView.querySelectorAll('[data-study-field]')];
+  const studyData = () => ({ illustrations: state.illustrations, reflections: state.reflections, promptLog: state.promptLog });
+  const roundStudy = (value) => Math.round(value * 100) / 100;
+  const formatStudyValue = (value, unit) => (value === null || value === undefined ? '—' : `${roundStudy(value)}${unit}`);
+  const formatStudyDiff = (value, unit) => {
+    if (value === null || value === undefined) return '—';
+    return `${value > 0 ? '+' : value < 0 ? '−' : '±'}${roundStudy(Math.abs(value))}${unit}`;
+  };
+  const getStudyValue = (fieldPath) => fieldPath.split('.').reduce((value, key) => value?.[key], state.study);
+  const setStudyValue = (fieldPath, value) => {
+    const keys = fieldPath.split('.');
+    const last = keys.pop();
+    keys.reduce((target, key) => target[key], state.study)[last] = value;
+  };
+  const studyPeriodLength = (start, end) => (/^\d{4}-\d{2}-\d{2}$/.test(start) && /^\d{4}-\d{2}-\d{2}$/.test(end) && end >= start
+    ? Math.round((new Date(`${end}T00:00:00`) - new Date(`${start}T00:00:00`)) / 86400000) + 1
+    : 0);
+
+  const fillStudyTable = (table, headers, rows) => {
+    const head = document.createElement('thead');
+    const headRow = document.createElement('tr');
+    headers.forEach((text) => {
+      const cell = document.createElement('th');
+      cell.scope = 'col';
+      cell.textContent = text;
+      headRow.append(cell);
+    });
+    head.append(headRow);
+    const body = document.createElement('tbody');
+    rows.forEach((row) => {
+      const tr = document.createElement('tr');
+      if (row.className) tr.className = row.className;
+      row.cells.forEach((cellData, index) => {
+        const cell = document.createElement(index === 0 ? 'th' : 'td');
+        if (index === 0) cell.scope = 'row';
+        const { text, className } = typeof cellData === 'object' ? cellData : { text: cellData };
+        cell.textContent = text;
+        if (className) cell.className = className;
+        tr.append(cell);
+      });
+      body.append(tr);
+    });
+    table.replaceChildren(head, body);
+  };
+
+  const svgElement = (name, attributes = {}) => {
+    const element = document.createElementNS('http://www.w3.org/2000/svg', name);
+    Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, String(value)));
+    return element;
+  };
+
+  const renderStudyTrend = () => {
+    const select = document.getElementById('study-trend-item');
+    const container = document.getElementById('study-trend');
+    const previous = select.value || study.OVERALL;
+    const names = study.evaluationNames(state.reflections);
+    select.replaceChildren(new Option('総合評価', study.OVERALL), ...names.map((name) => new Option(name, name)));
+    select.value = [study.OVERALL, ...names].includes(previous) ? previous : study.OVERALL;
+    const points = study.trend(state.reflections, select.value);
+    container.replaceChildren();
+    if (points.length === 0) {
+      const empty = document.createElement('p');
+      empty.className = 'small';
+      empty.textContent = 'まだ振り返りの記録がありません。';
+      container.append(empty);
+      return;
+    }
+    const first = points[0].score;
+    const last = points[points.length - 1].score;
+    const average = roundStudy(points.reduce((sum, point) => sum + point.score, 0) / points.length);
+    const summary = document.createElement('p');
+    summary.className = 'study-trend-summary';
+    summary.textContent = `${points.length}回の記録・最初 ${first} → 最新 ${last}（${formatStudyDiff(last - first, '')}）・平均 ${average}`;
+
+    const width = 320;
+    const height = 150;
+    const left = 26;
+    const right = 10;
+    const top = 12;
+    const bottom = 26;
+    const x = (index) => (points.length === 1 ? (left + width - right) / 2 : left + index * (width - left - right) / (points.length - 1));
+    const y = (score) => top + (5 - score) * (height - top - bottom) / 4;
+    const chart = svgElement('svg', { viewBox: `0 0 ${width} ${height}`, class: 'study-trend-chart', role: 'img', 'aria-label': `${select.selectedOptions[0]?.textContent || ''}の評価の推移` });
+    for (let score = 1; score <= 5; score += 1) {
+      chart.append(svgElement('line', { x1: left, x2: width - right, y1: y(score), y2: y(score), class: 'study-trend-grid' }));
+      const label = svgElement('text', { x: left - 8, y: y(score) + 4, class: 'study-trend-label', 'text-anchor': 'end' });
+      label.textContent = String(score);
+      chart.append(label);
+    }
+    if (points.length > 1) {
+      chart.append(svgElement('polyline', { points: points.map((point, index) => `${x(index)},${y(point.score)}`).join(' '), class: 'study-trend-line' }));
+    }
+    points.forEach((point, index) => {
+      const dot = svgElement('circle', { cx: x(index), cy: y(point.score), r: 4, class: 'study-trend-dot' });
+      const title = svgElement('title');
+      title.textContent = `${point.date}: ${point.score}`;
+      dot.append(title);
+      chart.append(dot);
+    });
+    const dateLabels = points.length === 1 ? [[0, 'middle']] : [[0, 'start'], [points.length - 1, 'end']];
+    dateLabels.forEach(([index, anchor]) => {
+      const label = svgElement('text', { x: x(index), y: height - 6, class: 'study-trend-label', 'text-anchor': anchor });
+      label.textContent = points[index].date;
+      chart.append(label);
+    });
+
+    const list = document.createElement('ol');
+    list.className = 'study-trend-list';
+    points.slice(-10).reverse().forEach((point) => {
+      const item = document.createElement('li');
+      const date = document.createElement('span');
+      date.textContent = point.date;
+      const stars = document.createElement('span');
+      stars.className = 'study-trend-stars';
+      stars.textContent = `${'★'.repeat(point.score)}${'☆'.repeat(5 - point.score)}`;
+      item.append(date, stars);
+      list.append(item);
+    });
+    container.append(summary, chart, list);
+  };
+
+  const renderStudy = () => {
+    studyFields.forEach((input) => {
+      if (document.activeElement !== input) input.value = getStudyValue(input.dataset.studyField) ?? '';
+    });
+    const data = studyData();
+    const period = study.resolvePeriod(data, state.study.period, localDate());
+    const summary = study.summarize(data, period.start, period.end);
+    document.getElementById('study-period-length').textContent = period.length
+      ? `集計期間: ${period.start} 〜 ${period.end}（${period.length}日間）`
+      : '終了日が開始日より前になっています。';
+
+    const { baseline } = state.study;
+    const baselineLength = studyPeriodLength(baseline.start, baseline.end);
+    const warnings = [];
+    if (baselineLength && period.length && Math.abs(baselineLength - period.length) > 3) {
+      warnings.push(`期間の長さが違います（利用前${baselineLength}日・利用後${period.length}日）。そろえると比較しやすくなります。`);
+    }
+    if (baselineLength && period.length && baseline.end >= period.start && baseline.start <= period.end) {
+      warnings.push('利用前と利用後の期間が重なっています。');
+    }
+    const warning = document.getElementById('study-period-warning');
+    warning.textContent = warnings.join(' ');
+    warning.hidden = warnings.length === 0;
+
+    fillStudyTable(document.getElementById('study-compare-table'), ['項目', '利用前', '利用後', '変化'], study.compare(baseline, summary).map((row) => ({
+      cells: [
+        row.label,
+        formatStudyValue(row.before, row.unit),
+        formatStudyValue(row.after, row.unit),
+        { text: formatStudyDiff(row.diff, row.unit), className: row.diff > 0 ? 'is-up' : row.diff < 0 ? 'is-down' : '' }
+      ]
+    })));
+
+    const weeks = period.length ? study.weekly(data, period.start, period.end) : [];
+    fillStudyTable(document.getElementById('study-weekly-table'), ['週', '描いた日数', '枚数', '制作時間', '振り返り', 'AI相談'], weeks.map((week) => ({
+      className: week.days === 0 ? 'is-empty' : '',
+      cells: [
+        `${week.start.slice(5).replace('-', '/')}〜${week.end.slice(5).replace('-', '/')}`,
+        `${week.days}日`,
+        `${week.count}枚`,
+        `${roundStudy(week.hours)}h`,
+        `${week.reflections}回`,
+        `${week.prompts}回`
+      ]
+    })));
+
+    const undatedPrompts = Math.max(0, state.promptHistory.length - state.promptLog.length);
+    const promptNote = document.getElementById('study-prompt-note');
+    promptNote.textContent = `集計機能を追加する前の相談（${undatedPrompts}件）は日付がないため、AI相談回数に含まれていません。`;
+    promptNote.hidden = undatedPrompts === 0;
+    renderStudyTrend();
+  };
+
+  const onStudyFieldChange = (event) => {
+    const input = event.target.closest('[data-study-field]');
+    if (!input) return;
+    const value = input.dataset.studyField === 'participantId' ? input.value.trim().slice(0, 20) : input.value;
+    setStudyValue(input.dataset.studyField, value);
+    saveState();
+    renderStudy();
+  };
+  studyView.addEventListener('input', onStudyFieldChange);
+  studyView.addEventListener('change', onStudyFieldChange);
+  document.getElementById('study-trend-item').addEventListener('change', renderStudyTrend);
+  document.addEventListener('view:shown', (event) => {
+    if (event.detail?.name === 'growth') renderStudy();
+  });
+
+  const downloadText = (content, type, fileName) => {
+    const url = URL.createObjectURL(new Blob([content], { type }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+  const studyFileName = (extension) => {
+    const id = state.study.participantId.replace(/[^\w-]/g, '');
+    return `drowpal-study-${id ? `${id}-` : ''}${localDate()}.${extension}`;
+  };
+  const studyFeedback = document.getElementById('study-export-feedback');
+  document.getElementById('study-export-csv').addEventListener('click', () => {
+    const exported = study.anonymize(studyData(), state.study, localDate());
+    downloadText(study.comparisonCsv(exported), 'text/csv;charset=utf-8', studyFileName('csv'));
+    studyFeedback.textContent = '集計表をCSVで保存しました。Excelなどで開けます。';
+  });
+  document.getElementById('study-export-json').addEventListener('click', () => {
+    const exported = study.anonymize(studyData(), state.study, localDate());
+    downloadText(JSON.stringify(exported, null, 2), 'application/json', studyFileName('json'));
+    studyFeedback.textContent = '詳細データをJSONで保存しました。';
+  });
+  renderStudy();
+
   const exportButton = document.getElementById('static-data-export');
   const importInput = document.getElementById('static-data-import');
   const importButton = document.getElementById('static-data-import-button');
@@ -1998,7 +2233,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         reflections: backup.reflections,
         todos: backup.todos,
         weeklyGoal: Number(backup.weeklyGoal) || 3,
-        promptHistory: Array.isArray(backup.promptHistory) ? backup.promptHistory : []
+        promptHistory: Array.isArray(backup.promptHistory) ? backup.promptHistory : [],
+        promptLog: Array.isArray(backup.promptLog) ? backup.promptLog : [],
+        study: normalizeStudy(backup.study)
       };
       saveState();
       dataFeedback.textContent = 'バックアップを取り込みました。再読み込みします。';
@@ -2060,6 +2297,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!message) return;
     state.promptHistory.push(message);
     if (state.promptHistory.length > 30) state.promptHistory.shift();
+    state.promptLog.push(localDate());
     saveState();
     renderPromptHistory();
     showPrompt(message);
