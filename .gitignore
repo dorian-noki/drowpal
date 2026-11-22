@@ -1,0 +1,25 @@
+node_modules/
+.vscode/
+data.sqlite3
+.env
+public/uploads/*
+!.gitkeep
+
+# Private planning and design notes (keep locally, do not publish)
+計画書.md
+素案.txt
+キャラクター設定の仕様.txt
+
+# Legacy server-only files (kept locally for development, not published)
+server.js
+.env.example
+deploy/
+test/
+tmp-test.db
+tmp-features-test.db
+public/app.js
+views/calendar.ejs
+views/character.ejs
+views/chat.ejs
+views/illustrations.ejs
+views/reflection.ejs

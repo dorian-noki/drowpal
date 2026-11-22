@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drowpal | 研究支援アプリ</title>
+    <link rel="icon" href="./favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body data-background-image="" data-font="standard" style="--accent: #7a70c4; --accent-strong: #4a4398; --accent-sub: #d9b2ec; --theme-bg: #f4f2f8; --theme-surface: #fcfbfe; --theme-text: #2e2b40; --theme-muted: #6d6982; --theme-border: #e1ddec; --on-accent: #ffffff; --success: #5b9a78; --danger: #b9566a; --theme-shadow: #4a4398; ">
+    <main class="app-shell">
+        <section class="feature-panel" aria-label="主要機能">
+          <div class="feature-header" id="feature-header">
+            <div class="feature-brand">
+              <img class="feature-brand-mark" src="./assets/logo.png" alt="" aria-hidden="true" />
+              <div>
+                <span class="feature-eyebrow">イラスト継続ダッシュボード</span>
+                <strong>Drowpal</strong>
+              </div>
+            </div>
+            <button type="button" id="menu-toggle" class="menu-toggle" aria-label="メニューを開く" aria-expanded="false" aria-controls="menu-list">
+              <span class="menu-toggle-bar"></span><span class="menu-toggle-bar"></span><span class="menu-toggle-bar"></span>
+            </button>
+            <nav id="menu-list" class="menu-list" aria-label="メニュー" hidden>
+              <button type="button" class="menu-button is-active" data-view-target="home" aria-label="ホーム">ホーム</button>
+              <button type="button" class="menu-button" data-view-target="reflection" aria-label="振り返り">振り返り</button>
+              <button type="button" class="menu-button" data-view-target="calendar" aria-label="カレンダー">カレンダー</button>
+              <button type="button" class="menu-button" data-view-target="illustrations" aria-label="イラスト">イラスト</button>
+              <button type="button" class="menu-button" data-view-target="settings" aria-label="設定">設定</button>
+            </nav>
+          </div>
+          <div class="home-header-image" id="home-header-image" hidden>
+            
+            <button type="button" class="home-header-toggle panel-collapse-toggle" id="home-header-toggle" aria-expanded="true" aria-controls="home-header-image" aria-label="ヘッダー画像を折りたたむ">▲ 画像を閉じる</button>
+          </div>
+          <div class="feature-view is-active" data-view="home">
+            <button type="button" class="home-sticker-settings" id="home-sticker-settings">＋ ステッカー</button>
+            <section class="welcome-card" aria-labelledby="welcome-heading" id="welcome-card">
+              <button type="button" class="welcome-close" id="welcome-close" aria-label="使い方の案内を閉じる">×</button>
+              <div class="welcome-copy">
+                <span class="welcome-label">はじめての方へ</span>
+                <h1 id="welcome-heading">今日は、どこから始めますか？</h1>
+                <p>描いた絵を残して、小さく振り返る。続け方が分からないときは、ソラに相談できます。</p>
+              </div>
+              <div class="quick-start" aria-label="使い方の3ステップ">
+                <button type="button" class="quick-step" data-view-target="illustrations">
+                  <span class="step-number">1</span>
+                  <span><strong>絵を登録</strong><small>今日描いた作品を保存</small></span>
+                  <span class="step-arrow" aria-hidden="true">→</span>
+                </button>
+                <button type="button" class="quick-step" data-view-target="reflection">
+                  <span class="step-number">2</span>
+                  <span><strong>振り返る</strong><small>評価や気づきを記録</small></span>
+                  <span class="step-arrow" aria-hidden="true">→</span>
+                </button>
+                <button type="button" class="quick-step" data-chat-focus>
+                  <span class="step-number">3</span>
+                  <span><strong>AIに相談</strong><small>次の練習や悩みを共有</small></span>
+                  <span class="step-arrow" aria-hidden="true">→</span>
+                </button>
+              </div>
+            </section>
+            <div class="summary-grid">
+              <div class="summary-card summary-card-character"><span class="summary-label">キャラクター</span><strong>ソラ</strong><span class="summary-note">あなたの制作パートナー</span></div>
+              <div class="summary-card"><span class="summary-label">振り返り</span><strong>0<small>件</small></strong><span class="summary-note">これまでの記録</span></div>
+              <div class="summary-card"><span class="summary-label">イラスト</span><strong>0<small>件</small></strong><span class="summary-note">保存した作品</span></div>
+            </div>
+            <div class="home-grid">
+              <section class="panel-block goal-card" aria-labelledby="weekly-goal-heading">
+                <div class="block-header">
+                  <div><span class="card-kicker">今週の進捗</span><h3 id="weekly-goal-heading">週間目標</h3></div>
+                  <button type="button" class="secondary consult-button" data-ai-consult="週間目標について相談したいです。今週の進み具合を踏まえて、目標枚数の決め方や今週の練習計画を一緒に考えてください。">AIに相談</button>
+                </div>
+                <p class="goal-date">2026-11-22 〜 2026-11-22</p>
+                <div class="goal-progress-row">
+                  <p class="goal-count"><strong id="weekly-goal-count">0</strong> / 3 枚</p>
+                  <span class="goal-percent">0%</span>
+                </div>
+                <div class="progress" role="progressbar" aria-label="週間目標の達成度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span style="width: 0%"></span></div>
+                <form method="post" action="#" class="inline-form goal-form">
+                  <label>目標枚数<input type="number" name="weeklyGoal" min="1" max="50" step="1" value="3" required /></label>
+                  <button type="submit">変更</button>
+                </form>
+              </section>
+              <section class="panel-block todo-card" aria-labelledby="todo-heading">
+                <div class="block-header">
+                  <div><span class="card-kicker">練習の予定</span><h3 id="todo-heading">やること</h3></div>
+                  <button type="button" class="secondary consult-button" data-ai-consult="やることリストについて相談したいです。優先順位や進め方を一緒に考えてください。">AIに相談</button>
+                </div>
+                <div class="todo-empty" id="todo-empty">
+                  <span aria-hidden="true">✓</span>
+                  <p>まだやることがありません。<small>小さな一歩を追加しましょう。</small></p>
+                </div>
+                <ul class="todo-list" id="todo-list">
+                  
+                </ul>
+                <form method="post" action="#" class="inline-form todo-form">
+                  <label class="todo-input">次にやること<input type="text" name="title" maxlength="100" placeholder="例: 手のクロッキーを10枚" required /></label>
+                  <button type="submit">追加</button>
+                </form>
+              </section>
+            </div>
+            <section class="panel-block recent-section" aria-labelledby="recent-reflections-heading">
+              <div class="section-heading"><div><span class="card-kicker">制作の軌跡</span><h3 id="recent-reflections-heading">最近の振り返り</h3></div><span class="section-count">0件</span></div>
+              <p class="small empty-message">まだ記録がありません。</p>
+            </section>
+          </div>
+
+          <div class="feature-view" data-view="reflection">
+            <header class="page-header"><span class="page-icon" aria-hidden="true">◎</span><div><h2>振り返り</h2><p>今日の絵を見て、気づきを短く残しましょう。</p></div></header>
+            <section class="reflection-image-preview reflection-image-mobile" id="reflection-image-mobile" hidden aria-label="選択中のイラスト">
+              <div class="reflection-image-preview-header">
+                <div><span>見ながら入力</span><strong id="reflection-image-mobile-title"></strong></div>
+                <button type="button" class="secondary reflection-image-collapse" id="reflection-image-mobile-toggle" aria-expanded="true" aria-controls="reflection-image-mobile-content">折りたたむ</button>
+              </div>
+              <div class="reflection-image-preview-content" id="reflection-image-mobile-content">
+                <img id="reflection-image-mobile-img" alt="" />
+                <button type="button" class="secondary reflection-image-fullscreen" data-reflection-image-fullscreen>大きく見る</button>
+              </div>
+            </section>
+            <form method="post" action="#" id="reflection-form" class="compact-form form-card reflection-form">
+              <input type="hidden" name="redirectTo" value="home" />
+              
+              <section class="reflection-step">
+                <div class="reflection-step-heading"><span>1</span><div><h3>見返す絵</h3><p>画像と日付を選びます</p></div></div>
+                <div class="reflection-target-grid">
+                  <label>イラスト<select name="illustrationId" required><option value="">選択してください</option></select></label>
+                  <label>日付<input type="date" name="reflectionDate" value="2026-11-22" required /></label>
+                </div>
+              </section>
+              <section class="reflection-step reflection-rating-step">
+                <div class="reflection-step-heading"><span>2</span><div><h3>まずは全体</h3><p>星をタップして、今の気持ちを評価</p></div></div>
+                <fieldset class="evaluation-section"><legend>総合評価</legend><input type="hidden" name="score" value="3" /><div class="score-picker" data-score-picker><button type="button" class="is-selected" data-score="1" aria-label="1点" aria-pressed="true">★</button><button type="button" class="is-selected" data-score="2" aria-label="2点" aria-pressed="true">★</button><button type="button" class="is-selected" data-score="3" aria-label="3点" aria-pressed="true">★</button><button type="button" class="" data-score="4" aria-label="4点" aria-pressed="false">☆</button><button type="button" class="" data-score="5" aria-label="5点" aria-pressed="false">☆</button></div><p class="score-caption">1: 難しかった　3: ふつう　5: 良かった</p></fieldset>
+              </section>
+              <section class="reflection-step">
+                <div class="reflection-step-heading"><span>3</span><div><h3>詳しく見る</h3><p>必要なら人物・風景の項目も追加</p></div></div>
+                <fieldset class="type-toggle-group"><legend>絵のタイプ</legend><label class="type-toggle"><input type="checkbox" data-type="person" /> 人物</label><label class="type-toggle"><input type="checkbox" data-type="landscape" /> 風景</label></fieldset>
+                <div id="evaluation-items"></div>
+                <button type="button" class="secondary add-evaluation-button" id="add-evaluation">＋ 評価項目を追加</button>
+              </section>
+              <input type="hidden" name="evaluationData" id="evaluation-data" />
+              <section class="reflection-step">
+                <div class="reflection-step-heading"><span>4</span><div><h3>ひと言残す</h3><p>気づきや次に試したいこと</p></div></div>
+                <div class="reflection-note-grid">
+                  <label>所要時間（h）<input type="number" step="0.5" min="0" name="hours" value="0" /></label>
+                  <label>メモ<textarea name="note" rows="4" placeholder="上手くいったこと、工夫したこと、次に試したいこと"></textarea></label>
+                </div>
+              </section>
+              <div class="form-submit-row"><p>入力内容は「保存」を押すまで確定しません。</p><button type="submit">振り返りを保存</button></div>
+            </form>
+            <h3 class="section-title-with-note">過去の記録<span>タップして開く</span></h3>
+            <div class="reflection-history-source"><p class="small">まだ記録がありません。</p></div>
+          </div>
+
+          <div class="feature-view" data-view="calendar">
+            <h2>2026年 11月</h2>
+            <div class="calendar-grid"><div class="calendar-day calendar-heading"><strong>日</strong></div><div class="calendar-day calendar-heading"><strong>月</strong></div><div class="calendar-day calendar-heading"><strong>火</strong></div><div class="calendar-day calendar-heading"><strong>水</strong></div><div class="calendar-day calendar-heading"><strong>木</strong></div><div class="calendar-day calendar-heading"><strong>金</strong></div><div class="calendar-day calendar-heading"><strong>土</strong></div></div>
+          </div>
+
+          <div class="feature-view" data-view="illustrations">
+            <header class="page-header"><span class="page-icon" aria-hidden="true">＋</span><div><h2>イラストを登録</h2><p>画像を選ぶだけで、制作を続けた記録として保存できます。</p></div></header>
+            <form method="post" action="#" enctype="multipart/form-data" class="compact-form form-card illustration-form">
+              <label class="upload-zone" for="illustration-image">
+                <span class="upload-zone-icon" aria-hidden="true">画像を選ぶ</span>
+                <strong>描いた絵をここに追加</strong>
+                <small>PNG・JPEG・WebP</small>
+                <input id="illustration-image" type="file" name="image" accept="image/png,image/jpeg,image/webp" required />
+                <img id="illustration-preview" class="file-preview" alt="選択した画像のプレビュー" hidden />
+              </label>
+              <label>タイトル<input type="text" name="title" placeholder="今日の一枚" /></label>
+              <label>日付<input type="date" name="illustrationDate" value="2026-11-22" required /></label>
+              <label>種類<select name="illustrationType"><option value="練習">練習</option><option value="落書き">落書き</option><option value="本気">本気</option></select></label>
+              <div class="form-submit-row"><p>あとで振り返り画面から評価できます。</p><button type="submit">イラストを保存</button></div>
+            </form>
+            <h3 class="section-title-with-note">登録したイラスト<span>0件</span></h3>
+            <div class="illustration-grid"></div>
+          </div>
+
+          <div class="feature-view" data-view="settings">
+            <header class="page-header"><span class="page-icon" aria-hidden="true">⚙</span><div><h2>設定</h2><p>まずは「名前・性格・画像」を変え、最後に「設定を保存」を押します。</p></div></header>
+            <section class="settings-guide" aria-labelledby="settings-guide-heading">
+              <div class="settings-guide-heading"><h3 id="settings-guide-heading">はじめてでも大丈夫。3ステップで変更できます</h3><p>迷ったら、初期設定のままでもすぐ使えます。変更したいところだけ触ってください。</p></div>
+              <div class="settings-guide-steps">
+                <article class="settings-guide-step"><span>1</span><h4>話し方を決める</h4><p>「名前」「性格」「口調」は、そのままAIへの指示になります。例文は具体的に書くほどキャラクターらしくなります。</p></article>
+                <article class="settings-guide-step"><span>2</span><h4>見た目を決める</h4><p>通常画像を選び、必要なら表情を追加します。大きな画像は「画像を圧縮して使う」を押すと端末内を軽くできます。</p></article>
+                <article class="settings-guide-step"><span>3</span><h4>保存して確認</h4><p>ページ下部の「設定を保存」を押します。表示が変わらないときは、案内に従ってページを再読み込みしてください。</p></article>
+              </div>
+              <p class="settings-guide-note">画像を用意しない場合は、デフォルトのソラとセリフをそのまま使えます。設定中に分からない項目があれば、空欄のまま進めても構いません（必須項目のみ入力してください）。</p>
+            </section>
+            <form method="post" action="#" enctype="multipart/form-data" class="compact-form form-card settings-form">
+              <section class="settings-section">
+                <div class="settings-section-heading"><span>1</span><div><h3>キャラクター</h3><p>名前・性格・話し方</p></div></div>
+              <label>名前<small>キャラクターを呼ぶときの名前（例: ソラ）</small><input type="text" name="name" maxlength="10" value="ソラ" required /></label>
+              <label>性格<small>どんな気持ちで接する相手か（例: 優しく励ましてくれる）</small><input type="text" name="personality" list="personality-presets" maxlength="100" value="優しく励ましてくれる" required /></label>
+              <label>口調<small>言葉の終わり方や雰囲気（例: 短く前向きな「〜だよ」）</small><input type="text" name="style" list="style-presets" maxlength="100" value="やさしく短く、前向き" required /></label>
+              <label>ユーザーの呼び方<small>チャットであなたを呼ぶ名前（例: あなた、きみ）</small><input type="text" name="userName" maxlength="10" value="あなた" required /></label>
+              <label>ユーザーへの接し方<small>褒め方・指摘のしかた・距離感を具体的に書きます</small><input type="text" name="interactionStyle" list="interaction-presets" maxlength="100" value="寄り添いながら次の一歩を提案する" required /></label>
+              <label>他プロフィール<small>任意・最大2000文字。趣味や役割など、会話に必要な背景を書けます。外部APIは使わないため、必要な情報のみに絞ることを推奨します。</small><textarea name="profile" rows="5" maxlength="2000"></textarea></label>
+              <label>出力例（最大9件・各300文字まで、任意）<textarea name="examples" rows="2" maxlength="300" placeholder="出力例 1"></textarea><textarea name="examples" rows="2" maxlength="300" placeholder="出力例 2"></textarea><textarea name="examples" rows="2" maxlength="300" placeholder="出力例 3"></textarea><textarea name="examples" rows="2" maxlength="300" placeholder="出力例 4"></textarea><textarea name="examples" rows="2" maxlength="300" placeholder="出力例 5"></textarea><textarea name="examples" rows="2" maxlength="300" placeholder="出力例 6"></textarea><textarea name="examples" rows="2" maxlength="300" placeholder="出力例 7"></textarea><textarea name="examples" rows="2" maxlength="300" placeholder="出力例 8"></textarea><textarea name="examples" rows="2" maxlength="300" placeholder="出力例 9"></textarea></label>
+              </section>
+              <section class="settings-section">
+                <div class="settings-section-heading"><span>2</span><div><h3>キャラクター画像</h3><p>通常と表情差分</p></div></div>
+              <fieldset class="pal-images-fieldset"><legend>パル画像</legend><p class="small">通常画像は必須です。表情差分は名前を変更でき、不要なものを個別に削除できます。</p><div class="pal-image-grid" id="pal-image-grid"><label class="pal-image-option" data-expression-key="normal"><span>通常</span><img src="./assets/default.png" alt="通常のプレビュー" /><input type="file" name="palImage_normal" accept="image/png,image/jpeg,image/webp" /></label></div><button type="button" class="secondary pal-expression-add" id="pal-expression-add">＋ 表情を追加</button><p class="small" id="pal-expression-status" role="status" aria-live="polite"></p></fieldset>
+                            <fieldset class="pal-motion-fieldset" id="pal-motion-settings">
+                              <legend>呼吸モーション</legend>
+                              <p class="small">通常画像から頭・肩・胸の位置を自動で見つけて、呼吸しているように動かします。変更はすぐ保存されます。</p>
+                              <p class="motion-performance-note">呼吸モーションは画像を動かし続けるため、端末の性能や使用状況によってはメモリや電池を多めに使います。動作が重い、発熱する、操作がカクつく場合は「呼吸モーションを使う」をオフにしてください。画像や設定、振り返りはそのまま利用できます。</p>
+                              <label class="pal-motion-toggle"><input type="checkbox" id="pal-motion-enabled" checked /> 呼吸モーションを使う</label>
+                              <div class="pal-motion-quick">
+                                <label>呼吸の速さ<span><input type="range" id="pal-motion-speed" min="8" max="30" step="1" value="16" /><output for="pal-motion-speed" id="pal-motion-speed-value">16回/分</output></span></label>
+                                <label>呼吸の強さ<span><input type="range" id="pal-motion-strength" min="0" max="200" step="5" value="100" /><output for="pal-motion-strength" id="pal-motion-strength-value">100%</output></span></label>
+                              </div>
+                              <div class="pal-motion-actions">
+                                <button type="button" id="pal-motion-open">範囲を見ながら細かく調整</button>
+                                <button type="button" class="secondary" id="pal-motion-auto">自動で作り直す</button>
+                              </div>
+                              <p class="small" id="pal-motion-status" role="status" aria-live="polite"></p>
+                            </fieldset>
+              </section>
+              <section class="settings-section">
+                <div class="settings-section-heading"><span>3</span><div><h3>画面の見た目</h3><p>背景・ヘッダー・テーマカラー</p></div></div>
+              <fieldset class="appearance-fieldset">
+                <legend>ホームの外観</legend>
+                <p class="small">背景とヘッダーは全画面に表示されます。ステッカーは画像をドラッグしてページ内の好きな場所に置けます。</p>
+                <div class="appearance-image-grid">
+                  <label class="appearance-image-option"><span>背景画像</span><span class="appearance-placeholder">未設定</span><input type="file" name="backgroundImage" accept="image/png,image/jpeg,image/webp" /></label>
+                  <label class="appearance-image-option"><span>ヘッダー画像</span><span class="appearance-placeholder">未設定</span><input type="file" name="headerImage" accept="image/png,image/jpeg,image/webp" /></label>
+                  
+                    <div class="appearance-sticker-setting">
+                      <label class="appearance-image-option"><span>ステッカー1</span><span class="appearance-placeholder">未設定</span><input type="file" name="stickerImage1" accept="image/png,image/webp" /></label>
+                      <label class="sticker-size-control"><span>大きさ <output for="sticker-size-1" data-sticker-size-output="1">100%</output></span><input type="range" id="sticker-size-1" data-sticker-size="1" min="60" max="160" step="5" value="100" /></label>
+                    </div>
+                  
+                    <div class="appearance-sticker-setting">
+                      <label class="appearance-image-option"><span>ステッカー2</span><span class="appearance-placeholder">未設定</span><input type="file" name="stickerImage2" accept="image/png,image/webp" /></label>
+                      <label class="sticker-size-control"><span>大きさ <output for="sticker-size-2" data-sticker-size-output="2">100%</output></span><input type="range" id="sticker-size-2" data-sticker-size="2" min="60" max="160" step="5" value="100" /></label>
+                    </div>
+                  
+                    <div class="appearance-sticker-setting">
+                      <label class="appearance-image-option"><span>ステッカー3</span><span class="appearance-placeholder">未設定</span><input type="file" name="stickerImage3" accept="image/png,image/webp" /></label>
+                      <label class="sticker-size-control"><span>大きさ <output for="sticker-size-3" data-sticker-size-output="3">100%</output></span><input type="range" id="sticker-size-3" data-sticker-size="3" min="60" max="160" step="5" value="100" /></label>
+                    </div>
+                  
+                </div>
+                <div class="theme-preset-grid" aria-label="デフォルトテーマカラー">
+                  
+                  <button type="button" class="theme-preset" data-theme-preset="lavender">
+                    <span class="theme-preset-colors"><i style="--swatch: #7a70c4"></i><i style="--swatch: #4a4398"></i><i style="--swatch: #f4f2f8"></i><i style="--swatch: #2e2b40"></i></span>
+                    <strong>やさしいパープル</strong><small>ロゴカラー・デフォルト</small>
+                  </button>
+                  
+                  <button type="button" class="theme-preset" data-theme-preset="sakura">
+                    <span class="theme-preset-colors"><i style="--swatch: #d9779f"></i><i style="--swatch: #b64f7b"></i><i style="--swatch: #fff5f9"></i><i style="--swatch: #392d35"></i></span>
+                    <strong>桜ピンク</strong><small>ふんわり</small>
+                  </button>
+                  
+                  <button type="button" class="theme-preset" data-theme-preset="suiro">
+                    <span class="theme-preset-colors"><i style="--swatch: #4389c9"></i><i style="--swatch: #2469a8"></i><i style="--swatch: #f1f8ff"></i><i style="--swatch: #203142"></i></span>
+                    <strong>すいろ</strong><small>さわやか</small>
+                  </button>
+                  
+                  <button type="button" class="theme-preset" data-theme-preset="mori">
+                    <span class="theme-preset-colors"><i style="--swatch: #6b946b"></i><i style="--swatch: #477447"></i><i style="--swatch: #f5f8f0"></i><i style="--swatch: #2a3829"></i></span>
+                    <strong>もり</strong><small>落ち着き</small>
+                  </button>
+                  
+                  <button type="button" class="theme-preset" data-theme-preset="night">
+                    <span class="theme-preset-colors"><i style="--swatch: #8b86d9"></i><i style="--swatch: #6f69c5"></i><i style="--swatch: #202331"></i><i style="--swatch: #f0f1f7"></i></span>
+                    <strong>ナイト</strong><small>ダーク</small>
+                  </button>
+                  
+                </div>
+                <div class="theme-color-grid">
+                  
+                  <label><span>アクセント<small>ボタン・リンク</small></span><input type="color" name="themeAccent" value="#7a70c4" data-theme-var="--accent" /></label>
+                  
+                  <label><span>濃いアクセント<small>強調・フォーカス</small></span><input type="color" name="themeAccentStrong" value="#4a4398" data-theme-var="--accent-strong" /></label>
+                  
+                  <label><span>サブアクセント<small>グラデーション</small></span><input type="color" name="themeAccentSub" value="#d9b2ec" data-theme-var="--accent-sub" /></label>
+                  
+                  <label><span>背景色<small>画面の背景</small></span><input type="color" name="themeBackground" value="#f4f2f8" data-theme-var="--theme-bg" /></label>
+                  
+                  <label><span>パネル色<small>カード・入力欄</small></span><input type="color" name="themeSurface" value="#fcfbfe" data-theme-var="--theme-surface" /></label>
+                  
+                  <label><span>文字色<small>本文</small></span><input type="color" name="themeText" value="#2e2b40" data-theme-var="--theme-text" /></label>
+                  
+                  <label><span>補足文字色<small>説明・日付</small></span><input type="color" name="themeMuted" value="#6d6982" data-theme-var="--theme-muted" /></label>
+                  
+                  <label><span>枠線色<small>区切り線</small></span><input type="color" name="themeBorder" value="#e1ddec" data-theme-var="--theme-border" /></label>
+                  
+                  <label><span>ボタン文字色<small>アクセント上の文字</small></span><input type="color" name="themeOnAccent" value="#ffffff" data-theme-var="--on-accent" /></label>
+                  
+                  <label><span>成功色<small>完了・OK</small></span><input type="color" name="themeSuccess" value="#5b9a78" data-theme-var="--success" /></label>
+                  
+                  <label><span>警告色<small>削除・エラー</small></span><input type="color" name="themeDanger" value="#b9566a" data-theme-var="--danger" /></label>
+                  
+                  <label><span>影の色<small>カードの影</small></span><input type="color" name="themeShadow" value="#4a4398" data-theme-var="--theme-shadow" /></label>
+                  
+                </div>
+                <fieldset class="font-picker" aria-labelledby="font-picker-heading">
+                  <legend id="font-picker-heading">文字の見た目</legend>
+                  <label>
+                    <span class="font-standard-sample">いつもの丸ゴシック</span>
+                    <strong>今のフォント</strong>
+                    <small>端末ごとの見慣れた表示です</small>
+                    <input type="radio" name="uiFont" value="standard" checked />
+                  </label>
+                  <label>
+                    <span class="font-soft-sample">やさしく、なめらかに</span>
+                    <strong>Rounded Mplus 1c</strong>
+                    <small>SIL Open Font License 1.1</small>
+                    <input type="radio" name="uiFont" value="soft"  />
+                  </label>
+                </fieldset>
+              </fieldset>
+              </section>
+              <datalist id="personality-presets"><option value="テンション高め、絵文字・擬音多用、褒め言葉もリアクションも大きい"></option><option value="落ち着いた口調、感情表現は控えめ、簡潔に要点を伝える"></option><option value="どこか抜けている、たまに的外れなコメントを挟む、親しみやすさ重視"></option><option value="真面目で丁寧、論理的にアドバイスする、少し堅め"></option><option value="距離感が近い、ユーザーに頼るような発言も混じる、可愛らしい口調"></option></datalist>
+              <datalist id="style-presets"><option value="「～だ」「～だろ」の男性標準口調"></option><option value="「～よ」「～ね」の女性標準口調"></option><option value="「～だよ」「～だね」の落ち着いた柔和口調"></option><option value="「～だよ」「～だね」の元気で幼い子供口調"></option><option value="敬語口調"></option></datalist>
+              <datalist id="interaction-presets"><option value="問題点を率直に指摘、改善点を具体的かつ妥協なく伝える。褒めは最小限"></option><option value="まず良い点を見つけて褒める、指摘はやわらかい言い回しで包む"></option><option value="感情を交えず、事実ベースで淡々と分析・助言する"></option><option value="「一緒に頑張ろう」というスタンス、共感重視、指摘より寄り添いが多い"></option><option value="基本的に褒めて自己肯定感を上げる方向、指摘はごく控えめか任意"></option></datalist>
+              <div class="form-submit-row sticky-submit"><p>変更した内容を端末に保存します。</p><button type="submit">設定を保存</button></div>
+            </form>
+            <div class="appearance-remove-list">
+              
+              
+              
+                <form method="post" action="/appearance/home_sticker_image_1/delete" class="appearance-remove-form" data-sticker-remove="1" hidden><button type="submit" class="secondary">ステッカー1を削除</button></form>
+              
+                <form method="post" action="/appearance/home_sticker_image_2/delete" class="appearance-remove-form" data-sticker-remove="2" hidden><button type="submit" class="secondary">ステッカー2を削除</button></form>
+              
+                <form method="post" action="/appearance/home_sticker_image_3/delete" class="appearance-remove-form" data-sticker-remove="3" hidden><button type="submit" class="secondary">ステッカー3を削除</button></form>
+              
+            </div>
+            <section class="ai-import-panel" id="ai-import-panel" aria-labelledby="ai-import-heading">
+              <div class="ai-import-heading-row">
+                <div><span class="card-kicker">外部AIで作って取り込む</span><h3 id="ai-import-heading">AI生成データ</h3></div>
+                <span class="small">端末内のみ保存</span>
+              </div>
+              <ol class="ai-import-steps">
+                <li>個別、または全種類をまとめて選ぶ</li>
+                <li>AI向けプロンプトをコピー</li>
+                <li>AIのJSON回答を貼り付ける</li>
+                <li>確認して保存</li>
+              </ol>
+              <div class="ai-import-generator">
+                <label>個別生成するデータ<select id="ai-import-type"></select></label>
+                <label>件数<input type="number" id="ai-import-count" value="5" min="1" max="20" /></label>
+                <button type="button" id="ai-import-generate">選択した種類だけ作成</button>
+                <button type="button" class="secondary" id="ai-import-generate-all">全種類をまとめて作成</button>
+              </div>
+              <p class="small">「全種類」は、キャラクター設定以外の7種類を1つのJSONで生成します。入力件数は各種類共通です（1〜10件）。</p>
+              <section class="ai-import-output" id="ai-import-prompt-box" hidden>
+                <label for="ai-import-prompt">AIへ貼り付けるプロンプト</label>
+                <textarea id="ai-import-prompt" rows="9" readonly></textarea>
+                <div class="ai-import-actions">
+                  <button type="button" id="ai-import-prompt-copy">プロンプトをコピー</button>
+                  <a class="secondary external-ai-link" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">外部AIを開く</a>
+                </div>
+              </section>
+              <section class="ai-import-answer">
+                <label for="ai-import-answer">AIの回答JSON<textarea id="ai-import-answer" rows="9" placeholder="AIが出力したJSONだけを貼り付けてください"></textarea></label>
+                <div class="ai-import-actions">
+                  <button type="button" id="ai-import-validate">内容を確認する</button>
+                  <button type="button" class="secondary" id="ai-import-fix-copy" hidden>修正をAIに依頼するプロンプト</button>
+                </div>
+                <div class="ai-import-validation" id="ai-import-validation" role="status" aria-live="polite"></div>
+              </section>
+              <section class="ai-import-preview" id="ai-import-preview" hidden>
+                <h4>取り込み内容の確認</h4>
+                <div id="ai-import-preview-content"></div>
+                <div class="ai-import-actions">
+                  <button type="button" id="ai-import-confirm" disabled>確認して保存する</button>
+                  <button type="button" class="secondary" id="ai-import-cancel">入力をクリア</button>
+                </div>
+              </section>
+              <section class="ai-import-management" aria-labelledby="ai-import-management-heading">
+                <div class="block-header"><h4 id="ai-import-management-heading">取り込み済みデータ</h4><button type="button" class="secondary" id="ai-import-refresh">一覧を更新</button></div>
+                <div id="ai-import-existing"></div>
+              </section>
+            </section>
+            <section class="discord-notification-panel" id="discord-notification-panel" aria-labelledby="discord-notification-heading">
+              <div class="ai-import-heading-row">
+                <div><span class="card-kicker">Drowpalから合図を届ける</span><h3 id="discord-notification-heading">Discord通知</h3></div>
+                <span class="small">Webhookは端末内のみ保存</span>
+              </div>
+              <p class="small">Drowpalを開いている間、指定した曜日と時刻に、AIで取り込んだ通知文からランダムで送信します。</p>
+              <div class="discord-notification-config">
+                <label class="discord-notification-enabled"><input type="checkbox" id="discord-notification-enabled" /> 定時通知を有効にする</label>
+                <label>Discord Webhook URL<input type="password" id="discord-notification-webhook" autocomplete="off" placeholder="https://discord.com/api/webhooks/..." /></label>
+                <fieldset class="discord-notification-days">
+                  <legend>送信する曜日</legend>
+                  <label><input type="checkbox" value="1" /> 月</label>
+                  <label><input type="checkbox" value="2" /> 火</label>
+                  <label><input type="checkbox" value="3" /> 水</label>
+                  <label><input type="checkbox" value="4" /> 木</label>
+                  <label><input type="checkbox" value="5" /> 金</label>
+                  <label><input type="checkbox" value="6" /> 土</label>
+                  <label><input type="checkbox" value="0" /> 日</label>
+                </fieldset>
+                <label>送信時刻<input type="time" id="discord-notification-time" /></label>
+              </div>
+              <div class="discord-notification-summary">
+                <span id="discord-notification-candidates">通知候補: 0件</span>
+                <span id="discord-notification-last-sent">未送信</span>
+              </div>
+              <div class="ai-import-actions">
+                <button type="button" id="discord-notification-save">設定を保存</button>
+                <button type="button" class="secondary" id="discord-notification-test">接続テスト</button>
+                <button type="button" class="secondary" id="discord-notification-send">ランダム通知を今すぐ送る</button>
+              </div>
+              <p class="discord-notification-status" id="discord-notification-status" role="status" aria-live="polite"></p>
+            </section>
+            <form method="post" action="#" class="reset-form"><button type="submit" class="danger-button">全てリセット</button></form>
+            <section class="data-transfer-panel" id="data-transfer-panel" aria-labelledby="data-transfer-heading">
+              <h3 id="data-transfer-heading">端末内データ</h3>
+              <p class="small">バックアップJSONをダウンロードできます。キャッシュやサイトデータを消す前に必ず保存してください。</p>
+              <div class="data-transfer-actions">
+                <button type="button" id="static-data-export">バックアップを保存</button>
+                <label>バックアップから復元<input type="file" id="static-data-import" accept="application/json" /></label>
+                <button type="button" class="secondary" id="static-data-import-button">取り込む</button>
+              </div>
+              <p class="small" id="static-data-feedback" role="status" aria-live="polite"></p>
+            </section>
+            <button type="button" class="welcome-restore settings-welcome-restore" id="welcome-restore" hidden>使い方を表示</button>
+          </div>
+        </section>
+
+        <section class="sidebar-character panel">
+          
+          <section class="reflection-image-preview reflection-image-desktop" id="reflection-image-desktop" hidden aria-label="振り返り中のイラスト">
+            <div class="reflection-image-preview-header">
+              <div><span>見ながら入力</span><strong id="reflection-image-desktop-title"></strong></div>
+              <button type="button" class="secondary reflection-image-close" id="reflection-image-desktop-close" aria-label="イラストプレビューを閉じる">×</button>
+            </div>
+            <div class="reflection-image-preview-content">
+              <img id="reflection-image-desktop-img" alt="" />
+              <button type="button" class="secondary reflection-image-fullscreen" data-reflection-image-fullscreen>大きく見る</button>
+            </div>
+          </section>
+          <button type="button" class="secondary reflection-image-reopen" id="reflection-image-desktop-reopen" hidden>イラストを表示</button>
+          <div class="character-image-stage" id="pal-image-stage" aria-label="パルをタップすると反応します。表示調整中だけ位置をドラッグできます。">
+            <img id="pal-image" class="character-image" src="./assets/default.png" alt="ソラ" draggable="false" />
+            <span class="character-drag-hint">ドラッグで位置調整</span>
+          </div>
+          <div class="character-speech-bubble" id="character-speech-bubble" role="status" aria-live="polite" hidden></div>
+          <div class="character-caption">
+            <span class="character-status" aria-hidden="true"></span>
+            <strong>ソラ</strong>
+            <span id="character-status-message">一緒に続けよう</span>
+            <button type="button" class="character-adjust-toggle" id="character-adjust-toggle" aria-expanded="false" aria-controls="character-adjust-controls">表示を調整</button>
+            <button type="button" class="character-caption-toggle" id="character-caption-toggle" aria-expanded="true" aria-controls="character-status-message" aria-label="キャラクター情報を折りたたむ">▲</button>
+          </div>
+          <div class="character-adjust-controls" id="character-adjust-controls" hidden>
+            <label for="pal-image-zoom">大きさ</label>
+            <input type="range" id="pal-image-zoom" min="90" max="220" value="90" aria-label="パル画像の大きさ" />
+            <button type="button" class="character-adjust-reset" id="pal-image-reset">初期位置に戻す</button>
+            <span>画像はドラッグして動かせます</span>
+          </div>
+        </section>
+
+        <section class="chat-panel" data-chat-mode="comments">
+          <div class="chat-history-header">
+            <div><span class="card-kicker">外部AIへの相談準備</span><h2>AIに相談</h2></div>
+            <button type="button" class="panel-collapse-toggle" id="chat-panel-toggle" aria-expanded="true" aria-controls="chat-panel-content" aria-label="AI相談パネルを折りたたむ">▲</button>
+          </div>
+          <div class="chat-panel-content" id="chat-panel-content">
+          <details class="chat-history-disclosure">
+            <summary>最近の相談履歴</summary>
+          <div class="chat-comments" id="chat-comments" aria-live="polite">
+            
+              
+              <div class="chat-bubble ai">こんにちは。今日の気持ちを一緒に整理しよう。</div>
+            
+          </div>
+          </details>
+          <form id="chat-form" class="chat-form">
+            <label for="message">相談したいこと</label>
+            <textarea id="message" name="message" rows="3" placeholder="外部AIに相談したいことを入力"></textarea>
+            <button type="submit">プロンプト作成</button>
+          </form>
+          <section class="prompt-builder" id="prompt-builder" hidden aria-labelledby="prompt-builder-heading">
+            <div class="prompt-builder-header">
+              <div><span class="card-kicker">外部AIへの相談準備</span><h3 id="prompt-builder-heading">プロンプト</h3></div>
+              <button type="button" id="prompt-close" class="secondary">閉じる</button>
+            </div>
+            <fieldset class="prompt-mode">
+              <legend>貼り付け先</legend>
+              <label><input type="radio" name="promptMode" value="full" checked /> 新しい会話（全文）</label>
+              <label><input type="radio" name="promptMode" value="diff" /> 会話の続き（前回からの差分だけ）</label>
+            </fieldset>
+            <p class="small prompt-mode-note" id="prompt-mode-note"></p>
+            <p class="prompt-summary" id="prompt-summary"></p>
+            <details class="prompt-preview" id="prompt-preview">
+              <summary>プロンプトの中身を見る</summary>
+              <textarea id="prompt-output" rows="10" readonly aria-label="生成されたAI用プロンプト"></textarea>
+            </details>
+            <div class="prompt-actions">
+              <button type="button" id="prompt-copy">プロンプトをコピー</button>
+              <a class="secondary external-ai-link" id="prompt-open-chatgpt" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">ChatGPTで入力済みの会話を開く</a>
+              <a class="secondary external-ai-link" href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">Geminiを開く</a>
+              <a class="secondary external-ai-link" href="https://claude.ai/" target="_blank" rel="noopener noreferrer">Claudeを開く</a>
+            </div>
+            <p class="small prompt-launch-note" id="prompt-launch-note">ChatGPTはプロンプトをURLへ入れた状態で開きます。送信前に内容を確認してください。GeminiとClaudeはプロンプトをコピーして貼り付けます。</p>
+            <p class="small prompt-help">コピーした文章を外部AIへ貼り付けて会話を始めてください。送信前に個人情報や秘密情報を確認してください。</p>
+            <p class="prompt-feedback" id="prompt-feedback" role="status" aria-live="polite"></p>
+          </section>
+          </div>
+          <button type="button" id="chat-mode-toggle" class="chat-mode-toggle" aria-label="チャットの表示を切り替え">入力に集中</button>
+        </section>
+
+        <nav class="mobile-nav" aria-label="スマートフォン用メニュー">
+          <button type="button" class="mobile-nav-button is-active" data-view-target="home"><span aria-hidden="true">⌂</span><span>ホーム</span></button>
+          <button type="button" class="mobile-nav-button" data-view-target="illustrations"><span aria-hidden="true">＋</span><span>絵を登録</span></button>
+          <button type="button" class="mobile-nav-button" data-view-target="reflection"><span aria-hidden="true">◎</span><span>振り返る</span></button>
+          <button type="button" class="mobile-nav-button mobile-nav-ai" data-chat-focus><span aria-hidden="true">♡</span><span>相談</span></button>
+        </nav>
+        <button type="button" class="scroll-to-top" id="scroll-to-top" aria-label="ページの先頭へ戻る" hidden>↑<span>上へ</span></button>
+
+        
+          <div class="home-sticker" data-sticker-number="1" hidden aria-label="ステッカー1。ドラッグしてページ内に配置できます。" tabindex="0">
+            
+          </div>
+        
+          <div class="home-sticker" data-sticker-number="2" hidden aria-label="ステッカー2。ドラッグしてページ内に配置できます。" tabindex="0">
+            
+          </div>
+        
+          <div class="home-sticker" data-sticker-number="3" hidden aria-label="ステッカー3。ドラッグしてページ内に配置できます。" tabindex="0">
+            
+          </div>
+        
+    </main>
+
+    <dialog class="motion-editor" id="motion-editor" aria-labelledby="motion-editor-title">
+      <div class="motion-editor-shell">
+        <header class="motion-editor-header">
+          <div>
+            <h3 id="motion-editor-title">呼吸モーションの調整</h3>
+            <p>枠をドラッグで移動、角や辺で大きさを変更。枠の中の●を引っぱると、その向きに動きます。何もない所をドラッグすると新しい範囲を作れます。</p>
+          </div>
+          <button type="button" class="motion-editor-close" data-motion-action="cancel" aria-label="保存せずに閉じる">×</button>
+        </header>
+        <aside class="motion-editor-list" aria-label="範囲一覧">
+          <div class="motion-editor-list-head"><h4>範囲</h4><button type="button" data-motion-action="add">＋ 追加</button></div>
+          <ul id="motion-region-list"></ul>
+        </aside>
+        <div class="motion-editor-stage" id="motion-editor-stage">
+          <canvas id="motion-editor-canvas" aria-hidden="true"></canvas>
+          <div class="motion-editor-overlay" id="motion-editor-overlay" aria-label="範囲の編集エリア"></div>
+        </div>
+        <aside class="motion-editor-props" id="motion-editor-props" aria-label="選択中の範囲の設定">
+          <p class="small motion-editor-empty" id="motion-editor-empty">範囲を選ぶと、ここで動き方を調整できます。</p>
+          <div id="motion-editor-fields" hidden></div>
+        </aside>
+        <footer class="motion-editor-toolbar">
+          <div class="motion-editor-playback">
+            <button type="button" data-motion-action="play" aria-pressed="true">⏸ 停止</button>
+            <button type="button" class="secondary" data-motion-action="compare" aria-pressed="false">元画像と比較</button>
+            <label class="motion-editor-scrub" hidden>呼吸の段階<input type="range" id="motion-editor-scrub" min="0" max="100" value="100" /></label>
+          </div>
+          <div class="motion-editor-globals">
+            <label>速さ<input type="range" data-motion-global="bpm" min="8" max="30" step="1" /><output data-motion-output="bpm"></output></label>
+            <label>強さ<input type="range" data-motion-global="strength" min="0" max="200" step="5" /><output data-motion-output="strength"></output></label>
+            <label>なめらかさ<input type="range" data-motion-global="smoothness" min="40" max="200" step="5" /><output data-motion-output="smoothness"></output></label>
+          </div>
+          <div class="motion-editor-actions">
+            <button type="button" class="secondary" data-motion-action="breath" title="各範囲の部位に合わせて動きを作り直します">呼吸を自動生成</button>
+            <button type="button" class="secondary" data-motion-action="detect" title="画像から範囲を検出し直します">範囲を自動検出</button>
+            <button type="button" class="secondary" data-motion-action="export">JSON書き出し</button>
+            <label class="secondary motion-editor-import">JSON読み込み<input type="file" id="motion-editor-import" accept="application/json" /></label>
+            <button type="button" class="secondary" data-motion-action="cancel">キャンセル</button>
+            <button type="button" data-motion-action="save">保存</button>
+          </div>
+        </footer>
+      </div>
+    </dialog>
+
+    <dialog class="reflection-image-dialog" id="reflection-image-dialog" aria-labelledby="reflection-image-dialog-title">
+      <div class="reflection-image-dialog-header">
+        <strong id="reflection-image-dialog-title">選択中のイラスト</strong>
+        <div class="reflection-image-zoom-controls" role="group" aria-label="画像の拡大縮小">
+          <button type="button" class="secondary" id="reflection-image-zoom-out" aria-label="縮小">−</button>
+          <label class="reflection-image-zoom-slider">倍率<input type="range" id="reflection-image-zoom" min="50" max="500" step="25" value="100" /></label>
+          <output id="reflection-image-zoom-value" for="reflection-image-zoom">100%</output>
+          <button type="button" class="secondary" id="reflection-image-zoom-in" aria-label="拡大">＋</button>
+          <button type="button" class="secondary" id="reflection-image-zoom-reset">100%に戻す</button>
+        </div>
+        <button type="button" class="secondary" id="reflection-image-dialog-close">閉じる</button>
+      </div>
+      <div class="reflection-image-dialog-canvas" id="reflection-image-dialog-canvas" tabindex="0" aria-label="拡大した画像。ドラッグで移動、ホイールまたはピンチで拡大縮小できます。">
+        <img id="reflection-image-dialog-img" alt="" />
+      </div>
+    </dialog>
+
+    <script>window.palImages = {"normal":"./assets/default.png"};</script>
+    <script>window.reflectionDraft = null;</script>
+    <script>window.drowpalPromptContext = {"character":{"id":1,"name":"ソラ","personality":"優しく励ましてくれる","style":"やさしく短く、前向き","greeting":"こんにちは。今日の気持ちを一緒に整理しよう。","user_name":"あなた","interaction_style":"寄り添いながら次の一歩を提案する","profile":"","examples":"[]","examplesList":[]},"weeklyGoal":{"count":0,"goal":3},"todos":[],"reflections":[]};</script>
+    <script src="./theme.js"></script>
+    <script src="./ai-import.js"></script>
+    <script src="./discord-notifications.js"></script>
+    <script src="./prompt.js"></script>
+    <script src="./pal-motion.js"></script>
+    <script src="./pal-motion-editor.js"></script>
+    <script src="./static-app.js"></script>
+    <script src="./reflection.js"></script>
+  </body>
+</html>

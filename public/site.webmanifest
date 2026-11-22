@@ -1,0 +1,21 @@
+{
+  "name": "Drowpal",
+  "short_name": "Drowpal",
+  "description": "イラスト制作の振り返りと継続を支えるアプリ",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f2f8",
+  "theme_color": "#7a70c4",
+  "icons": [
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

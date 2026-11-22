@@ -1,0 +1,14 @@
+{
+  "name": "drowpal",
+  "version": "1.0.0",
+  "description": "AI character support web app for self-reflection",
+  "main": "scripts/serve-static.js",
+  "scripts": {
+    "start": "node scripts/serve-static.js",
+    "build:static": "node scripts/build-static.js",
+    "serve:static": "node scripts/serve-static.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10"
+  }
+}
